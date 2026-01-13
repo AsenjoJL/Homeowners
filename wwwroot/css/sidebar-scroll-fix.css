@@ -1,0 +1,20 @@
+/* ============================================================
+   FIX: Allow both sidebar and main content to scroll independently
+   ============================================================ */
+
+/* Main content should scroll */
+.main-content {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: calc(100vh - 60px) !important;
+}
+
+.content-wrapper {
+    min-height: 100% !important;
+}
+
+/* Sidebar menu scrolls independently */
+.sidebar-menu {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}

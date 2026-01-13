@@ -1,0 +1,211 @@
+@model List<HOMEOWNER.Models.Complaint>
+
+@{
+    ViewData["Title"] = "Manage Complaints";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<style>
+    .management-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        margin-top: 1rem;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .page-title i {
+        color: #4361ee;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .data-table thead {
+        background: linear-gradient(135deg, #4361ee, #3a56d4);
+        color: white;
+    }
+
+    .data-table th {
+        padding: 1rem;
+        font-weight: 600;
+        text-align: left;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+        vertical-align: middle;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: rgba(67, 97, 238, 0.05);
+    }
+
+    .status-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .status-submitted { background: #e3f2fd; color: #1976d2; }
+    .status-under-review { background: #fff3e0; color: #f57c00; }
+    .status-in-progress { background: #e1f5fe; color: #0288d1; }
+    .status-resolved { background: #e8f5e9; color: #388e3c; }
+    .status-closed { background: #f3e5f5; color: #7b1fa2; }
+
+    .btn-action {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-right: 0.5rem;
+        transition: all 0.3s;
+        font-size: 0.85rem;
+    }
+
+    .btn-view { background: #4361ee; color: white; }
+    .btn-view:hover { background: #3a56d4; transform: translateY(-2px); }
+
+    .btn-respond { background: #10b981; color: white; }
+    .btn-respond:hover { background: #059669; }
+
+    .btn-delete { background: #ef4444; color: white; }
+    .btn-delete:hover { background: #dc2626; }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #6c757d;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #adb5bd;
+    }
+</style>
+
+<div class="management-container">
+    <div class="page-header">
+        <h2 class="page-title">
+            <i class="fas fa-exclamation-circle"></i>
+            Complaints Management
+        </h2>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th><i class="fas fa-hashtag"></i> ID</th>
+                    <th><i class="fas fa-user"></i> Homeowner</th>
+                    <th><i class="fas fa-tag"></i> Subject</th>
+                    <th><i class="fas fa-folder"></i> Category</th>
+                    <th><i class="fas fa-flag"></i> Status</th>
+                    <th><i class="fas fa-calendar"></i> Submitted</th>
+                    <th><i class="fas fa-cog"></i> Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var complaint in Model)
+                    {
+                        <tr>
+                            <td>#@complaint.ComplaintID</td>
+                            <td>@(complaint.Homeowner?.FullName ?? "Anonymous")</td>
+                            <td>@complaint.Subject</td>
+                            <td>@(complaint.Category ?? "N/A")</td>
+                            <td>
+                                <span class="status-badge status-@complaint.Status.ToLower().Replace(" ", "-")">
+                                    @complaint.Status
+                                </span>
+                            </td>
+                            <td>@complaint.SubmittedAt.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                <button class="btn-action btn-view" onclick="viewComplaint(@complaint.ComplaintID)">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                @if (complaint.Status != "Resolved" && complaint.Status != "Closed")
+                                {
+                                    <button class="btn-action btn-respond" onclick="respondComplaint(@complaint.ComplaintID)">
+                                        <i class="fas fa-reply"></i> Respond
+                                    </button>
+                                }
+                                <button class="btn-action btn-delete" onclick="deleteComplaint(@complaint.ComplaintID)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>No complaints found</p>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function viewComplaint(id) {
+        $.get('/Complaint/AdminDetails/' + id, function(data) {
+            $('#mainContent').html(data);
+        });
+    }
+
+    function respondComplaint(id) {
+        // Load response modal or page
+        viewComplaint(id);
+    }
+
+    function deleteComplaint(id) {
+        if (confirm('Are you sure you want to delete this complaint?')) {
+            $.post('/Complaint/Delete/' + id, function(response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            });
+        }
+    }
+</script>
+

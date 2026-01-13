@@ -1,0 +1,198 @@
+@model List<HOMEOWNER.Models.VisitorPass>
+
+@{
+    ViewData["Title"] = "Manage Visitor Passes";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<style>
+    .management-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        margin-top: 1rem;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .page-title i {
+        color: #4361ee;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .data-table thead {
+        background: linear-gradient(135deg, #4361ee, #3a56d4);
+        color: white;
+    }
+
+    .data-table th {
+        padding: 1rem;
+        font-weight: 600;
+        text-align: left;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+    }
+
+    .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: rgba(67, 97, 238, 0.05);
+    }
+
+    .status-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .status-pending { background: #fff3e0; color: #f57c00; }
+    .status-approved { background: #e8f5e9; color: #388e3c; }
+    .status-rejected { background: #ffebee; color: #c62828; }
+    .status-completed { background: #e3f2fd; color: #1976d2; }
+
+    .btn-action {
+        padding: 0.4rem 0.8rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-right: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .btn-approve { background: #10b981; color: white; }
+    .btn-reject { background: #ef4444; color: white; }
+    .btn-checkin { background: #3b82f6; color: white; }
+    .btn-checkout { background: #8b5cf6; color: white; }
+</style>
+
+<div class="management-container">
+    <div class="page-header">
+        <h2 class="page-title">
+            <i class="fas fa-id-card"></i>
+            Visitor Passes Management
+        </h2>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Visitor Name</th>
+                <th>Phone</th>
+                <th>Visit Date</th>
+                <th>Purpose</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var pass in Model)
+                {
+                    <tr>
+                        <td>@pass.VisitorName</td>
+                        <td>@pass.VisitorPhone</td>
+                        <td>@pass.VisitDate.ToString("MMM dd, yyyy")</td>
+                        <td>@pass.Purpose</td>
+                        <td>
+                            <span class="status-badge status-@pass.Status.ToLower()">
+                                @pass.Status
+                            </span>
+                        </td>
+                        <td>
+                            @if (pass.Status == "Pending")
+                            {
+                                <button class="btn-action btn-approve" onclick="updateStatus(@pass.VisitorPassID, 'Approved')">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                                <button class="btn-action btn-reject" onclick="updateStatus(@pass.VisitorPassID, 'Rejected')">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
+                            }
+                            @if (pass.Status == "Approved" && pass.CheckedInAt == null)
+                            {
+                                <button class="btn-action btn-checkin" onclick="checkIn(@pass.VisitorPassID)">
+                                    <i class="fas fa-sign-in-alt"></i> Check In
+                                </button>
+                            }
+                            @if (pass.CheckedInAt != null && pass.CheckedOutAt == null)
+                            {
+                                <button class="btn-action btn-checkout" onclick="checkOut(@pass.VisitorPassID)">
+                                    <i class="fas fa-sign-out-alt"></i> Check Out
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 3rem;">
+                        <i class="fas fa-inbox" style="font-size: 3rem; color: #adb5bd;"></i>
+                        <p>No visitor passes found</p>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function updateStatus(id, status) {
+        $.post('/VisitorPass/UpdateStatus/' + id, { status: status }, function(response) {
+            if (response.success) {
+                location.reload();
+            } else {
+                alert(response.message);
+            }
+        });
+    }
+
+    function checkIn(id) {
+        $.post('/VisitorPass/CheckIn/' + id, function(response) {
+            if (response.success) {
+                location.reload();
+            } else {
+                alert(response.message);
+            }
+        });
+    }
+
+    function checkOut(id) {
+        $.post('/VisitorPass/CheckOut/' + id, function(response) {
+            if (response.success) {
+                location.reload();
+            } else {
+                alert(response.message);
+            }
+        });
+    }
+</script>
+

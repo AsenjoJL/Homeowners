@@ -1,0 +1,207 @@
+@model List<HOMEOWNER.Models.GateAccessLog>
+
+@{
+    ViewData["Title"] = "Gate Access Logs";
+    var startDate = ViewBag.StartDate ?? DateTime.UtcNow.AddDays(-7);
+    var endDate = ViewBag.EndDate ?? DateTime.UtcNow;
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<style>
+    .management-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        margin-top: 1rem;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .page-title i {
+        color: #4361ee;
+    }
+
+    .filter-section {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .filter-section input {
+        padding: 0.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .data-table thead {
+        background: linear-gradient(135deg, #4361ee, #3a56d4);
+        color: white;
+    }
+
+    .data-table th {
+        padding: 1rem;
+        font-weight: 600;
+        text-align: left;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+    }
+
+    .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: rgba(67, 97, 238, 0.05);
+    }
+
+    .access-type {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .access-entry { background: #e8f5e9; color: #388e3c; }
+    .access-exit { background: #ffebee; color: #c62828; }
+
+    .user-type {
+        padding: 0.3rem 0.6rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .type-homeowner { background: #e3f2fd; color: #1976d2; }
+    .type-visitor { background: #f3e5f5; color: #7b1fa2; }
+    .type-staff { background: #fff3e0; color: #f57c00; }
+    .type-delivery { background: #e0f2f1; color: #00796b; }
+</style>
+
+<div class="management-container">
+    <div class="page-header">
+        <h2 class="page-title">
+            <i class="fas fa-door-open"></i>
+            Gate Access Logs
+        </h2>
+    </div>
+
+    <div class="filter-section">
+        <div>
+            <label>Start Date:</label>
+            <input type="date" id="startDate" value="@startDate.ToString("yyyy-MM-dd")" />
+        </div>
+        <div>
+            <label>End Date:</label>
+            <input type="date" id="endDate" value="@endDate.ToString("yyyy-MM-dd")" />
+        </div>
+        <button class="btn btn-primary" onclick="filterLogs()">
+            <i class="fas fa-filter"></i> Filter
+        </button>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>User Type</th>
+                <th>Name</th>
+                <th>Plate Number</th>
+                <th>Access Type</th>
+                <th>Gate Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var log in Model)
+                {
+                    <tr>
+                        <td>@log.AccessTime.ToString("MMM dd, yyyy HH:mm")</td>
+                        <td>
+                            <span class="user-type type-@log.UserType.ToLower()">
+                                @log.UserType
+                            </span>
+                        </td>
+                        <td>
+                            @{
+                                var homeowners = ViewBag.Homeowners as Dictionary<int, string> ?? new Dictionary<int, string>();
+                                string displayName = "N/A";
+                                
+                                if (!string.IsNullOrEmpty(log.VisitorName))
+                                {
+                                    displayName = log.VisitorName;
+                                }
+                                else if (log.HomeownerID.HasValue && homeowners.ContainsKey(log.HomeownerID.Value))
+                                {
+                                    displayName = homeowners[log.HomeownerID.Value];
+                                }
+                                else if (log.UserType == "Homeowner" && log.HomeownerID.HasValue)
+                                {
+                                    displayName = $"Homeowner #{log.HomeownerID}";
+                                }
+                                else
+                                {
+                                    displayName = log.UserType;
+                                }
+                            }
+                            @displayName
+                        </td>
+                        <td>@(log.PlateNumber ?? "N/A")</td>
+                        <td>
+                            <span class="access-type access-@log.AccessType.ToLower()">
+                                @log.AccessType
+                            </span>
+                        </td>
+                        <td>@log.GateLocation</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" style="text-align: center; padding: 3rem;">
+                        <i class="fas fa-inbox" style="font-size: 3rem; color: #adb5bd;"></i>
+                        <p>No access logs found for the selected period</p>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function filterLogs() {
+        var startDate = document.getElementById('startDate').value;
+        var endDate = document.getElementById('endDate').value;
+        window.location.href = '/GateAccessLog/Index?startDate=' + startDate + '&endDate=' + endDate;
+    }
+</script>
+

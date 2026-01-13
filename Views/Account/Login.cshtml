@@ -1,0 +1,293 @@
+﻿@model HOMEOWNER.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - RestNestHome</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true">
+</head>
+<body>
+    <!-- Floating Background Elements -->
+    <div class="floating-bg"></div>
+    <div class="floating-bg"></div>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Logo -->
+            <img src="~/logo.png" alt="RestNestHome Logo" class="logo">
+            
+            <!-- Heading -->
+            <h2>
+                <i class="fas fa-sign-in-alt me-2" style="color: var(--primary-color);"></i>
+                Welcome Back
+            </h2>
+
+            <!-- Error/Success Messages -->
+            @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+            {
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>@ViewBag.ErrorMessage</span>
+                </div>
+            }
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <span>@TempData["Success"]</span>
+                </div>
+            }
+
+            <!-- Login Form -->
+            <form asp-action="Login" method="post" id="loginForm">
+                <!-- Email Field -->
+                <div class="form-group">
+                    <div class="input-container">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input asp-for="Email" 
+                               class="form-control" 
+                               placeholder="Enter your email address"
+                               autocomplete="email"
+                               required>
+                    </div>
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-group">
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input asp-for="Password" 
+                               type="password" 
+                               class="form-control" 
+                               placeholder="Enter your password"
+                               autocomplete="current-password"
+                               required>
+                        <i class="fas fa-eye input-icon" 
+                           style="left: auto; right: 1.25rem; cursor: pointer;"
+                           id="togglePassword"
+                           onclick="togglePasswordVisibility()"></i>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <!-- Remember Me & Forgot Password -->
+                <div class="login-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="rememberMe" name="rememberMe">
+                        <label for="rememberMe">
+                            <i class="fas fa-check-circle me-1"></i>
+                            Remember me
+                        </label>
+                    </div>
+                    <a asp-action="ForgotPassword" asp-controller="Account" class="forgot-password">
+                        <i class="fas fa-key me-1"></i>
+                        Forgot password?
+                    </a>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" class="btn-login" id="loginBtn">
+                    <span class="spinner"><i class="fas fa-spinner"></i></span>
+                    <span class="btn-text">
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        Log In
+                    </span>
+                </button>
+
+                <!-- Divider -->
+                <div class="divider">
+                    <span>or continue with</span>
+                </div>
+
+                <!-- Social Login Options -->
+                <div class="social-login">
+                    <a href="#" class="social-btn" title="Sign in with Google" onclick="socialLogin('google')">
+                        <i class="fab fa-google"></i>
+                    </a>
+                    <a href="#" class="social-btn" title="Sign in with Facebook" onclick="socialLogin('facebook')">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="social-btn" title="Sign in with Apple" onclick="socialLogin('apple')">
+                        <i class="fab fa-apple"></i>
+                    </a>
+                </div>
+
+                <!-- Register Link -->
+                <div class="register-link">
+                    <i class="fas fa-user-plus me-2"></i>
+                    Don't have an account? 
+                    <a href="/Account/Register">Create one now</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toggle Password Visibility
+        function togglePasswordVisibility() {
+            const passwordInput = document.querySelector('input[type="password"]');
+            const toggleIcon = document.getElementById('togglePassword');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Form Submission with Loading State
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                // Validate form
+                if (!this.checkValidity()) {
+                    e.preventDefault();
+                    this.reportValidity();
+                    return;
+                }
+
+                // Show loading state
+                loginBtn.classList.add('loading');
+                loginBtn.disabled = true;
+                loadingOverlay.classList.add('active');
+
+                // Add ripple effect
+                addRippleEffect(loginBtn, e);
+            });
+        }
+
+        // Social Login Handler
+        function socialLogin(provider) {
+            showNotification(`Signing in with ${provider.charAt(0).toUpperCase() + provider.slice(1)}...`, 'info');
+            // Add your social login logic here
+            console.log(`Social login: ${provider}`);
+        }
+
+        // Add Ripple Effect to Button
+        function addRippleEffect(button, event) {
+            const ripple = document.createElement('span');
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+
+            ripple.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.5);
+                left: ${x}px;
+                top: ${y}px;
+                pointer-events: none;
+                transform: scale(0);
+                animation: ripple-animation 0.6s ease-out;
+            `;
+
+            button.style.position = 'relative';
+            button.style.overflow = 'hidden';
+            button.appendChild(ripple);
+
+            setTimeout(() => ripple.remove(), 600);
+        }
+
+        // Show Notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'info' ? 'success' : type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 10001;
+                animation: slideInDown 0.5s ease-out;
+                max-width: 300px;
+            `;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Animations are already in login.css
+
+        // Input Focus Animations
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+
+            // Real-time validation
+            input.addEventListener('input', function() {
+                if (this.validity.valid) {
+                    this.style.borderColor = 'var(--success-color)';
+                } else if (this.value.length > 0) {
+                    this.style.borderColor = 'var(--error-color)';
+                } else {
+                    this.style.borderColor = 'var(--light-gray)';
+                }
+            });
+        });
+
+        // Add entrance animations on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate form elements sequentially
+            const formGroups = document.querySelectorAll('.form-group');
+            formGroups.forEach((group, index) => {
+                group.style.opacity = '0';
+                group.style.transform = 'translateX(-30px)';
+                setTimeout(() => {
+                    group.style.transition = 'all 0.6s ease-out';
+                    group.style.opacity = '1';
+                    group.style.transform = 'translateX(0)';
+                }, 400 + (index * 100));
+            });
+        });
+    </script>
+</body>
+</html>

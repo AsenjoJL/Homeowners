@@ -1,0 +1,237 @@
+﻿@* Partial View for Dashboard *@
+@{
+    // Set default values if ViewBag values are null
+    var homeownerCount = ViewBag.HomeownerCount ?? 0;
+    var staffCount = ViewBag.StaffCount ?? 0;
+    var reservationCount = ViewBag.ReservationCount ?? 0;
+}
+
+<div class="dashboard-section">
+    <h1 class="dashboard-title">
+        <i class="fas fa-chart-line text-gradient"></i>
+        Dashboard Overview
+    </h1>
+
+    <div class="row g-4">
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="dashboard-card card-blue" style="animation-delay: 0.1s;">
+                <i class="fas fa-users"></i>
+                <h5>Total Homeowners</h5>
+                <h2>@homeownerCount</h2>
+                <div class="mt-3">
+                    <small style="opacity: 0.9;"><i class="fas fa-arrow-up me-1"></i>Active members</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="dashboard-card card-orange" style="animation-delay: 0.2s;">
+                <i class="fas fa-user-tie"></i>
+                <h5>Staff Members</h5>
+                <h2>@staffCount</h2>
+                <div class="mt-3">
+                    <small style="opacity: 0.9;"><i class="fas fa-users-cog me-1"></i>Team size</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="dashboard-card card-teal" style="animation-delay: 0.3s;">
+                <i class="fas fa-calendar-check"></i>
+                <h5>Active Reservations</h5>
+                <h2>@reservationCount</h2>
+                <div class="mt-3">
+                    <small style="opacity: 0.9;"><i class="fas fa-clock me-1"></i>This month</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="dashboard-card card-grey" style="animation-delay: 0.4s;">
+                <i class="fas fa-bell"></i>
+                <h5>Notifications</h5>
+                <h2>@reservationCount</h2>
+                <div class="mt-3">
+                    <small style="opacity: 0.9;"><i class="fas fa-envelope me-1"></i>Pending alerts</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics & Recent Activity -->
+    <h3 class="section-header">
+        <i class="fas fa-chart-pie me-2"></i>Statistics & Activity
+    </h3>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="analytics-container slide-in-right">
+                <h5>
+                    <i class="fas fa-chart-bar" style="color: #3b82f6;"></i>
+                    Facility Usage Analytics
+                </h5>
+                <div class="chart-container">
+                    <canvas id="analyticsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="activity-container slide-in-right" style="animation-delay: 0.2s;">
+                <h5>
+                    <i class="fas fa-bolt" style="color: #f59e0b;"></i>
+                    Recent Activity
+                </h5>
+                <ul>
+                    <li>
+                        <i class="fas fa-user-plus" style="color: #4361ee;"></i>
+                        <span>New Home Owner registration</span>
+                        <span class="activity-time">1 hour ago</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-calendar-check" style="color: #10b981;"></i>
+                        <span>Reservation created</span>
+                        <span class="activity-time">2 hours ago</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-user-tie" style="color: #f59e0b;"></i>
+                        <span>New Staff User added</span>
+                        <span class="activity-time">3 hours ago</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-file-invoice-dollar" style="color: #3b82f6;"></i>
+                        <span>New payment received</span>
+                        <span class="activity-time">5 hours ago</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-bullhorn" style="color: #8b5cf6;"></i>
+                        <span>Announcement published</span>
+                        <span class="activity-time">6 hours ago</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Load Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+    // Wait for everything to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if canvas exists before trying to create chart
+        const canvas = document.getElementById('analyticsChart');
+        if (!canvas) {
+            console.error('Canvas element not found');
+            return;
+        }
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+            console.error('Could not get canvas context');
+            return;
+        }
+
+        try {
+            // Create gradients for chart bars
+            const gradient1 = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient1.addColorStop(0, 'rgba(67, 97, 238, 0.9)');
+            gradient1.addColorStop(1, 'rgba(67, 97, 238, 0.5)');
+
+            const gradient2 = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient2.addColorStop(0, 'rgba(245, 158, 11, 0.9)');
+            gradient2.addColorStop(1, 'rgba(245, 158, 11, 0.5)');
+
+            const gradient3 = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient3.addColorStop(0, 'rgba(16, 185, 129, 0.9)');
+            gradient3.addColorStop(1, 'rgba(16, 185, 129, 0.5)');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Swimming Pool', 'Tennis Court', 'Function Room'],
+                    datasets: [{
+                        label: 'Usage Level',
+                        data: [75, 55, 90],
+                        backgroundColor: [gradient1, gradient2, gradient3],
+                        borderColor: [
+                            'rgba(67, 97, 238, 1)',
+                            'rgba(245, 158, 11, 1)',
+                            'rgba(16, 185, 129, 1)'
+                        ],
+                        borderWidth: 0,
+                        borderRadius: 12,
+                        barThickness: 50,
+                        maxBarThickness: 60,
+                        hoverBackgroundColor: [
+                            'rgba(67, 97, 238, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(16, 185, 129, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 33, 50, 0.95)',
+                            titleFont: { family: 'Poppins', size: 14, weight: '600' },
+                            bodyFont: { family: 'Poppins', size: 13 },
+                            padding: 14,
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: {
+                                label: (context) => `Usage: ${context.raw}%`,
+                                title: (context) => context[0].label
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { 
+                                color: 'rgba(0, 0, 0, 0.05)', 
+                                drawBorder: false,
+                                lineWidth: 1
+                            },
+                            ticks: { 
+                                font: { family: 'Poppins', size: 11 }, 
+                                color: '#6c757d',
+                                stepSize: 20
+                            },
+                            title: {
+                                display: true,
+                                text: 'Utilization (%)',
+                                font: { family: 'Poppins', size: 12, weight: '600' },
+                                color: '#2c3e50',
+                                padding: {top: 0, left: 0, right: 0, bottom: 15}
+                            }
+                        },
+                        x: {
+                            grid: { display: false, drawBorder: false },
+                            ticks: { 
+                                font: { family: 'Poppins', size: 11, weight: '500' }, 
+                                color: '#2c3e50'
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeOutQuart',
+                        delay: (context) => context.dataIndex * 200
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Error initializing chart:', error);
+        }
+    });
+</script>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sidebar Scroll Test</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: #1e2132;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .sidebar-header {
+            flex: 0 0 auto;
+            padding: 20px;
+            background: #2a2d44;
+            color: white;
+            text-align: center;
+        }
+        
+        .sidebar-menu {
+            flex: 1 1 auto;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            min-height: 0;
+            padding: 10px 0;
+        }
+        
+        .sidebar-menu::-webkit-scrollbar {
+            width: 14px;
+        }
+        
+        .sidebar-menu::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-menu::-webkit-scrollbar-thumb {
+            background: #ffffff;
+            border-radius: 7px;
+            border: 3px solid #1e2132;
+        }
+        
+        .menu-item {
+            padding: 15px 20px;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .menu-item:hover {
+            background: rgba(67, 97, 238, 0.15);
+            color: white;
+        }
+        
+        .menu-category {
+            padding: 10px 20px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 15px;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 40px;
+        }
+        
+        .test-result {
+            background: #4CAF50;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>📋 SCROLL TEST</h2>
+            </div>
+            <div class="sidebar-menu" id="scrollTest">
+                <div class="menu-item">✅ Dashboard</div>
+                
+                <div class="menu-category">USER MANAGEMENT</div>
+                <div class="menu-item">👥 Homeowners</div>
+                <div class="menu-item">👔 Staff</div>
+                
+                <div class="menu-category">SERVICE MANAGEMENT</div>
+                <div class="menu-item">🔧 Service Requests</div>
+                <div class="menu-item">📅 Reservations</div>
+                <div class="menu-item">⚠️ Complaints</div>
+                
+                <div class="menu-category">CONTENT MANAGEMENT</div>
+                <div class="menu-item">📢 Announcements</div>
+                <div class="menu-item">🗓️ Events</div>
+                <div class="menu-item">💬 Forum</div>
+                <div class="menu-item">📁 Documents</div>
+                <div class="menu-item">📊 Polls & Surveys</div>
+                
+                <div class="menu-category">COMMUNITY MANAGEMENT</div>
+                <div class="menu-item">📞 Contact Directory</div>
+                <div class="menu-item">🎫 Visitor Passes</div>
+                <div class="menu-item">🚗 Vehicle Registration</div>
+                <div class="menu-item">🚪 Gate Access Logs</div>
+                
+                <div class="menu-category">FINANCIAL MANAGEMENT</div>
+                <div class="menu-item">💰 Billing & Payments</div>
+                
+                <div class="menu-category">REPORTS & ANALYTICS</div>
+                <div class="menu-item">📈 Analytics Dashboard</div>
+                
+                <div class="menu-item" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; color: #ff6b6b;">🚪 Logout</div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="test-result">
+                <h1>✅ Sidebar Scrolling Test Page</h1>
+                <p>If you can see this page, try the following:</p>
+            </div>
+            
+            <h2>Instructions:</h2>
+            <ol style="font-size: 18px; line-height: 2;">
+                <li><strong>Move your mouse over the dark sidebar on the left</strong></li>
+                <li><strong>Scroll your mouse wheel up and down</strong></li>
+                <li><strong>Can you see all menu items from Dashboard to Logout?</strong></li>
+                <li><strong>Is there a white scrollbar on the right side of the sidebar?</strong></li>
+            </ol>
+            
+            <div id="scrollInfo" style="background: #2196F3; color: white; padding: 20px; border-radius: 10px; margin-top: 30px;">
+                <h3>Scroll Info:</h3>
+                <p id="scrollHeight"></p>
+                <p id="clientHeight"></p>
+                <p id="scrollTop"></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const scrollElement = document.getElementById('scrollTest');
+        const scrollInfo = document.getElementById('scrollInfo');
+        
+        function updateScrollInfo() {
+            document.getElementById('scrollHeight').textContent = `Total scroll height: ${scrollElement.scrollHeight}px`;
+            document.getElementById('clientHeight').textContent = `Visible height: ${scrollElement.clientHeight}px`;
+            document.getElementById('scrollTop').textContent = `Current scroll position: ${scrollElement.scrollTop.toFixed(0)}px`;
+        }
+        
+        scrollElement.addEventListener('scroll', updateScrollInfo);
+        updateScrollInfo();
+        
+        console.log('Sidebar menu element:', scrollElement);
+        console.log('Scroll height:', scrollElement.scrollHeight);
+        console.log('Client height:', scrollElement.clientHeight);
+        console.log('Can scroll:', scrollElement.scrollHeight > scrollElement.clientHeight);
+    </script>
+</body>
+</html>

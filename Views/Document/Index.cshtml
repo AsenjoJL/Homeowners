@@ -1,0 +1,154 @@
+@model IEnumerable<HOMEOWNER.Models.Document>
+
+@{
+    ViewData["Title"] = "Documents";
+    var categories = ViewBag.Categories as string[] ?? new[] { "All", "Forms", "Guidelines", "Financial Reports", "Meeting Minutes" };
+    var selectedCategory = ViewBag.SelectedCategory as string ?? "All";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-file-alt me-2"></i>Document Library</h2>
+        @if (User.IsInRole("Admin"))
+        {
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                <i class="fas fa-upload me-2"></i>Upload Document
+            </button>
+        }
+    </div>
+
+    <!-- Category Filter -->
+    <div class="mb-3">
+        <div class="btn-group" role="group">
+            @foreach (var cat in categories)
+            {
+                <a href="@Url.Action("Index", new { category = cat })" 
+                   class="btn @(cat == selectedCategory ? "btn-primary" : "btn-outline-primary")">
+                    @cat
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- Documents Grid -->
+    <div class="row">
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var doc in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <i class="fas fa-file-pdf text-danger me-2"></i>@doc.Title
+                            </h5>
+                            <p class="card-text text-muted small">@doc.Description</p>
+                            <div class="mb-2">
+                                <span class="badge bg-info">@doc.Category</span>
+                                <span class="badge bg-secondary">@doc.FileType.ToUpper()</span>
+                            </div>
+                            <div class="text-muted small mb-2">
+                                <i class="fas fa-calendar me-1"></i>@doc.UploadedAt.ToString("MMM dd, yyyy")
+                                <br>
+                                <i class="fas fa-download me-1"></i>@doc.DownloadCount downloads
+                            </div>
+                            <a href="@Url.Action("Download", new { id = doc.DocumentID })" class="btn btn-primary btn-sm">
+                                <i class="fas fa-download me-1"></i>Download
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>No documents found in this category.
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Upload Modal (Admin Only) -->
+@if (User.IsInRole("Admin"))
+{
+    <div class="modal fade" id="uploadModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload Document</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="uploadForm">
+                        <div class="mb-3">
+                            <label class="form-label">Title *</label>
+                            <input type="text" class="form-control" id="docTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" id="docDescription" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Category *</label>
+                            <select class="form-select" id="docCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="Forms">Forms</option>
+                                <option value="Guidelines">Guidelines</option>
+                                <option value="Financial Reports">Financial Reports</option>
+                                <option value="Meeting Minutes">Meeting Minutes</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">File *</label>
+                            <input type="file" class="form-control" id="docFile" accept=".pdf,.doc,.docx,.xls,.xlsx" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="uploadDocument()">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function uploadDocument() {
+            var form = $('#uploadForm')[0];
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append('file', $('#docFile')[0].files[0]);
+            formData.append('title', $('#docTitle').val());
+            formData.append('description', $('#docDescription').val());
+            formData.append('category', $('#docCategory').val());
+
+            $.ajax({
+                url: '@Url.Action("Upload", "Document")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    if (response.success) {
+                        alert('Document uploaded successfully!');
+                        $('#uploadModal').modal('hide');
+                        location.reload();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                },
+                error: function() {
+                    alert('Error uploading document. Please try again.');
+                }
+            });
+        }
+    </script>
+}
+

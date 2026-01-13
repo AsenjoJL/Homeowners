@@ -1,0 +1,75 @@
+@{
+    ViewData["Title"] = "Upload Document";
+}
+
+<div class="container-fluid">
+    <h2><i class="fas fa-upload me-2"></i>Upload Document</h2>
+    
+    <div class="card">
+        <div class="card-body">
+            <form id="uploadForm">
+                <div class="mb-3">
+                    <label class="form-label">Title *</label>
+                    <input type="text" class="form-control" id="docTitle" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" id="docDescription" rows="3"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Category *</label>
+                    <select class="form-select" id="docCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="Forms">Forms</option>
+                        <option value="Guidelines">Guidelines</option>
+                        <option value="Financial Reports">Financial Reports</option>
+                        <option value="Meeting Minutes">Meeting Minutes</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">File *</label>
+                    <input type="file" class="form-control" id="docFile" accept=".pdf,.doc,.docx,.xls,.xlsx" required>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="uploadDocument()">
+                    <i class="fas fa-upload me-2"></i>Upload
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function uploadDocument() {
+        var form = $('#uploadForm')[0];
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        var formData = new FormData();
+        formData.append('file', $('#docFile')[0].files[0]);
+        formData.append('title', $('#docTitle').val());
+        formData.append('description', $('#docDescription').val());
+        formData.append('category', $('#docCategory').val());
+
+        $.ajax({
+            url: '@Url.Action("Upload", "Document")',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success) {
+                    alert('Document uploaded successfully!');
+                    window.location.href = '@Url.Action("Manage", "Document")';
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function() {
+                alert('Error uploading document. Please try again.');
+            }
+        });
+    }
+</script>
+

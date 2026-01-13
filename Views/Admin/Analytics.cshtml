@@ -1,0 +1,458 @@
+@model Tuple<IEnumerable<HOMEOWNER.Models.Facility>, IEnumerable<HOMEOWNER.Models.Reservation>>
+
+@{
+    var facilities = Model.Item1;
+    var reservations = Model.Item2;
+    
+    // Calculate statistics
+    var totalReservations = reservations.Count();
+    var approvedReservations = reservations.Count(r => r.Status == "Approved");
+    var pendingReservations = reservations.Count(r => r.Status == "Pending");
+    var cancelledReservations = reservations.Count(r => r.Status == "Cancelled");
+    var totalFacilities = facilities.Count();
+    var availableFacilities = facilities.Count(f => f.AvailabilityStatus == "Available");
+    
+    // Monthly reservations
+    var currentMonth = DateTime.Now.Month;
+    var currentYear = DateTime.Now.Year;
+    var monthlyReservations = reservations.Count(r => r.ReservationDate.Month == currentMonth && r.ReservationDate.Year == currentYear);
+    
+    // Most popular facilities
+    var popularFacilities = reservations
+        .Where(r => r.Status == "Approved")
+        .GroupBy(r => r.FacilityID)
+        .Select(g => new {
+            FacilityID = g.Key,
+            Count = g.Count(),
+            Facility = facilities.FirstOrDefault(f => f.FacilityID == g.Key)
+        })
+        .OrderByDescending(x => x.Count)
+        .Take(5)
+        .ToList();
+}
+
+<style>
+    :root {
+        --primary-blue: #4361ee;
+        --primary-hover: #3a56d4;
+        --secondary-blue: #3f37c9;
+        --success-green: #4cc9f0;
+        --warning-orange: #f8961e;
+        --danger-red: #ef233c;
+        --info-teal: #4895ef;
+        --light-gray: #f8f9fa;
+        --medium-gray: #e9ecef;
+        --dark-gray: #212529;
+        --text-muted: #6c757d;
+        --white: #ffffff;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .analytics-container {
+        padding: 1rem 0;
+    }
+
+    .analytics-header {
+        margin-bottom: 2rem;
+    }
+
+    .analytics-header h2 {
+        font-weight: 600;
+        color: var(--dark-gray);
+        font-size: 1.75rem;
+        margin: 0;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--white);
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid var(--primary-blue);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .stat-card.success {
+        border-left-color: var(--success-green);
+    }
+
+    .stat-card.warning {
+        border-left-color: var(--warning-orange);
+    }
+
+    .stat-card.danger {
+        border-left-color: var(--danger-red);
+    }
+
+    .stat-card.info {
+        border-left-color: var(--info-teal);
+    }
+
+    .stat-card .icon {
+        font-size: 2.5rem;
+        color: var(--primary-blue);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-card.success .icon {
+        color: var(--success-green);
+    }
+
+    .stat-card.warning .icon {
+        color: var(--warning-orange);
+    }
+
+    .stat-card.danger .icon {
+        color: var(--danger-red);
+    }
+
+    .stat-card.info .icon {
+        color: var(--info-teal);
+    }
+
+    .stat-card h3 {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        margin: 0 0 0.5rem 0;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-card .value {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--dark-gray);
+        margin: 0;
+    }
+
+    .chart-container {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        margin-bottom: 2rem;
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--medium-gray);
+    }
+
+    .chart-header h3 {
+        font-weight: 600;
+        color: var(--dark-gray);
+        margin: 0;
+        font-size: 1.25rem;
+    }
+
+    .chart-placeholder {
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--light-gray);
+        border-radius: 8px;
+        color: var(--text-muted);
+    }
+
+    .table-container {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        overflow-x: auto;
+    }
+
+    .table {
+        margin: 0;
+    }
+
+    .table thead {
+        background: var(--light-gray);
+    }
+
+    .table thead th {
+        font-weight: 600;
+        color: var(--dark-gray);
+        border: none;
+        padding: 1rem;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-top: 1px solid var(--medium-gray);
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 0.75rem;
+    }
+
+    .badge-success {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .badge-warning {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .badge-danger {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .progress-bar-container {
+        background: var(--light-gray);
+        border-radius: 10px;
+        height: 30px;
+        overflow: hidden;
+        margin-top: 0.5rem;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary-blue), var(--secondary-blue));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: width 0.5s ease;
+    }
+</style>
+
+<div class="analytics-container">
+    <div class="analytics-header">
+        <h2><i class="fas fa-chart-pie me-2"></i>Reports & Analytics</h2>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="icon"><i class="fas fa-calendar-check"></i></div>
+            <h3>Total Reservations</h3>
+            <p class="value">@totalReservations</p>
+        </div>
+        <div class="stat-card success">
+            <div class="icon"><i class="fas fa-check-circle"></i></div>
+            <h3>Approved</h3>
+            <p class="value">@approvedReservations</p>
+        </div>
+        <div class="stat-card warning">
+            <div class="icon"><i class="fas fa-clock"></i></div>
+            <h3>Pending</h3>
+            <p class="value">@pendingReservations</p>
+        </div>
+        <div class="stat-card danger">
+            <div class="icon"><i class="fas fa-times-circle"></i></div>
+            <h3>Cancelled</h3>
+            <p class="value">@cancelledReservations</p>
+        </div>
+        <div class="stat-card info">
+            <div class="icon"><i class="fas fa-building"></i></div>
+            <h3>Total Facilities</h3>
+            <p class="value">@totalFacilities</p>
+        </div>
+        <div class="stat-card success">
+            <div class="icon"><i class="fas fa-check"></i></div>
+            <h3>Available</h3>
+            <p class="value">@availableFacilities</p>
+        </div>
+        <div class="stat-card info">
+            <div class="icon"><i class="fas fa-calendar-alt"></i></div>
+            <h3>This Month</h3>
+            <p class="value">@monthlyReservations</p>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3><i class="fas fa-chart-bar me-2"></i>Reservation Status</h3>
+                </div>
+                <div class="chart-placeholder">
+                    <canvas id="statusChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-container">
+                <div class="chart-header">
+                    <h3><i class="fas fa-chart-line me-2"></i>Monthly Trend</h3>
+                </div>
+                <div class="chart-placeholder">
+                    <canvas id="monthlyChart" width="400" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Most Popular Facilities -->
+    <div class="table-container">
+        <div class="chart-header">
+            <h3><i class="fas fa-star me-2"></i>Most Popular Facilities</h3>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Facility Name</th>
+                    <th>Total Reservations</th>
+                    <th>Popularity</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (popularFacilities.Any())
+                {
+                    int rank = 1;
+                    int maxReservations = popularFacilities.First().Count;
+                    @foreach (var facility in popularFacilities)
+                    {
+                        var percentage = maxReservations > 0 ? (facility.Count * 100.0 / maxReservations) : 0;
+                        <tr>
+                            <td>
+                                @if (rank == 1)
+                                {
+                                    <span class="badge badge-warning"><i class="fas fa-trophy"></i> #@rank</span>
+                                }
+                                else
+                                {
+                                    <strong>#@rank</strong>
+                                }
+                            </td>
+                            <td><strong>@(facility.Facility?.FacilityName ?? "Unknown")</strong></td>
+                            <td>@facility.Count reservations</td>
+                            <td>
+                                <div class="progress-bar-container">
+                                    <div class="progress-bar" style="width: @percentage%">
+                                        @facility.Count
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        rank++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4" class="text-center text-muted py-4">
+                            <i class="fas fa-info-circle me-2"></i>No reservation data available
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Reservation Status Chart
+        var statusCtx = document.getElementById('statusChart');
+        if (statusCtx) {
+            new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Approved', 'Pending', 'Cancelled'],
+                    datasets: [{
+                        data: [@approvedReservations, @pendingReservations, @cancelledReservations],
+                        backgroundColor: [
+                            '#4cc9f0',
+                            '#f8961e',
+                            '#ef233c'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Monthly Trend Chart (Last 6 months)
+        var monthlyCtx = document.getElementById('monthlyChart');
+        if (monthlyCtx) {
+            var months = [];
+            var counts = [];
+            @for (int i = 5; i >= 0; i--)
+            {
+                var month = DateTime.Now.AddMonths(-i);
+                var count = reservations.Count(r => r.ReservationDate.Month == month.Month && r.ReservationDate.Year == month.Year);
+                <text>
+                months.push('@month.ToString("MMM yyyy")');
+                counts.push(@count);
+                </text>
+            }
+
+            new Chart(monthlyCtx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Reservations',
+                        data: counts,
+                        borderColor: '#4361ee',
+                        backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+

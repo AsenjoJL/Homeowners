@@ -1,0 +1,464 @@
+@model IEnumerable<HOMEOWNER.Models.Billing>
+
+@{
+    ViewData["Title"] = "Billing & Payments";
+    var billings = Model?.ToList() ?? new List<HOMEOWNER.Models.Billing>();
+    var homeowners = ViewBag.Homeowners as List<HOMEOWNER.Models.Homeowner> ?? new List<HOMEOWNER.Models.Homeowner>();
+    var totalRevenue = ViewBag.TotalRevenue as double? ?? 0;
+    var paidBills = ViewBag.PaidBills as int? ?? 0;
+    var pendingBills = ViewBag.PendingBills as int? ?? 0;
+    var overdueBills = ViewBag.OverdueBills as int? ?? 0;
+}
+
+<style>
+    :root {
+        --primary-blue: #4361ee;
+        --primary-hover: #3a56d4;
+        --success-green: #4cc9f0;
+        --warning-orange: #f8961e;
+        --danger-red: #ef233c;
+        --light-gray: #f8f9fa;
+        --medium-gray: #e9ecef;
+        --dark-gray: #212529;
+        --white: #ffffff;
+    }
+
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .billing-container {
+        background: var(--white);
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        padding: 2rem;
+        margin-top: 1rem;
+    }
+
+    .billing-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--medium-gray);
+    }
+
+    .billing-header h2 {
+        font-weight: 600;
+        color: var(--dark-gray);
+        font-size: 1.75rem;
+        margin: 0;
+    }
+
+    .btn-primary {
+        background: var(--primary-blue);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(67, 97, 238, 0.2);
+    }
+
+    .stat-card.success {
+        background: linear-gradient(135deg, #4cc9f0 0%, #4895ef 100%);
+    }
+
+    .stat-card.warning {
+        background: linear-gradient(135deg, #f8961e 0%, #f77f00 100%);
+    }
+
+    .stat-card.danger {
+        background: linear-gradient(135deg, #ef233c 0%, #d90429 100%);
+    }
+
+    .stat-card h3 {
+        font-size: 0.875rem;
+        opacity: 0.9;
+        margin: 0 0 0.5rem 0;
+        font-weight: 500;
+    }
+
+    .stat-card .value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .billing-table-container {
+        background: var(--white);
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .table {
+        margin: 0;
+    }
+
+    .table thead {
+        background: var(--light-gray);
+    }
+
+    .table thead th {
+        font-weight: 600;
+        color: var(--dark-gray);
+        border: none;
+        padding: 1rem;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-top: 1px solid var(--medium-gray);
+    }
+
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 0.75rem;
+    }
+
+    .badge-success {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .badge-warning {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .badge-danger {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .badge-info {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .search-container {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 3rem;
+        border: 2px solid var(--medium-gray);
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.3s;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: var(--text-muted);
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.3;
+    }
+</style>
+
+<div class="billing-container">
+    <div class="billing-header">
+        <h2><i class="fas fa-credit-card me-2"></i>Billing & Payments Management</h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createBillingModal">
+            <i class="fas fa-plus me-2"></i>Create New Bill
+        </button>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Revenue</h3>
+            <p class="value" id="totalRevenue">₱@totalRevenue.ToString("N2")</p>
+        </div>
+        <div class="stat-card success">
+            <h3>Paid Bills</h3>
+            <p class="value" id="paidBills">@paidBills</p>
+        </div>
+        <div class="stat-card warning">
+            <h3>Pending Payments</h3>
+            <p class="value" id="pendingBills">@pendingBills</p>
+        </div>
+        <div class="stat-card danger">
+            <h3>Overdue</h3>
+            <p class="value" id="overdueBills">@overdueBills</p>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" id="billingSearch" class="search-input" placeholder="Search by homeowner name, email, or bill ID...">
+    </div>
+
+    <!-- Billing Table -->
+    <div class="billing-table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Bill ID</th>
+                    <th>Homeowner</th>
+                    <th>Email</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="billingTableBody">
+                @if (billings.Any())
+                {
+                    @foreach (var billing in billings.OrderByDescending(b => b.CreatedAt))
+                    {
+                        var homeowner = homeowners.FirstOrDefault(h => h.HomeownerID == billing.HomeownerID);
+                        var isOverdue = billing.Status == "Pending" && billing.DueDate < DateTime.UtcNow;
+                        var statusClass = billing.Status == "Paid" ? "badge-success" : 
+                                         billing.Status == "Overdue" || isOverdue ? "badge-danger" : "badge-warning";
+                        var displayStatus = isOverdue ? "Overdue" : billing.Status;
+                        
+                        <tr>
+                            <td>#@billing.BillingID</td>
+                            <td>@(homeowner?.FullName ?? "Unknown")</td>
+                            <td>@(homeowner?.Email ?? "-")</td>
+                            <td>@billing.Description</td>
+                            <td><strong>₱@billing.Amount.ToString("N2")</strong></td>
+                            <td>@billing.DueDate.ToString("MMM dd, yyyy")</td>
+                            <td><span class="badge @statusClass">@displayStatus</span></td>
+                            <td>
+                                @if (billing.Status != "Paid")
+                                {
+                                    <button class="btn btn-sm btn-success" onclick="markAsPaid(@billing.BillingID)" title="Mark as Paid">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                }
+                                <button class="btn btn-sm btn-danger" onclick="deleteBilling(@billing.BillingID)" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="empty-state">
+                            <i class="fas fa-receipt"></i>
+                            <p>No billing records found. Create your first bill to get started.</p>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Create Billing Modal -->
+<div class="modal fade" id="createBillingModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-file-invoice-dollar me-2"></i>Create New Bill</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                @Html.AntiForgeryToken()
+                <form id="createBillingForm">
+                    <div class="mb-3">
+                        <label class="form-label">Select Homeowner</label>
+                        <select class="form-select" id="homeownerSelect" required>
+                            <option value="">-- Select Homeowner --</option>
+                            @foreach (var homeowner in homeowners)
+                            {
+                                <option value="@homeowner.HomeownerID">@homeowner.FullName (@homeowner.Email)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Bill Description</label>
+                        <input type="text" class="form-control" id="billDescription" placeholder="e.g., Monthly Association Fee" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Amount (₱)</label>
+                            <input type="number" class="form-control" id="billAmount" step="0.01" min="0" placeholder="0.00" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Due Date</label>
+                            <input type="date" class="form-control" id="dueDate" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Bill Type</label>
+                        <select class="form-select" id="billType" required>
+                            <option value="Association Fee">Association Fee</option>
+                            <option value="Maintenance Fee">Maintenance Fee</option>
+                            <option value="Utility Fee">Utility Fee</option>
+                            <option value="Penalty">Penalty</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="createBill()">
+                    <i class="fas fa-save me-2"></i>Create Bill
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Search functionality
+        $('#billingSearch').on('keyup', function() {
+            var value = $(this).val().toLowerCase();
+            $('#billingTableBody tr').filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+
+        // Set minimum date to today
+        var today = new Date().toISOString().split('T')[0];
+        $('#dueDate').attr('min', today);
+    });
+
+    function createBill() {
+        var form = $('#createBillingForm')[0];
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        var billData = {
+            homeownerID: parseInt($('#homeownerSelect').val()),
+            description: $('#billDescription').val(),
+            amount: parseFloat($('#billAmount').val()),
+            dueDate: $('#dueDate').val(),
+            billType: $('#billType').val()
+        };
+
+        $.ajax({
+            url: '@Url.Action("CreateBilling", "Admin")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(billData),
+            headers: {
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('Bill created successfully!');
+                    $('#createBillingModal').modal('hide');
+                    form.reset();
+                    // Reload the page to show new bill
+                    location.reload();
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('Error creating bill. Please try again.');
+                console.error(xhr);
+            }
+        });
+    }
+
+    function markAsPaid(billingId) {
+        if (!confirm('Mark this bill as paid?')) return;
+
+        $.ajax({
+            url: '@Url.Action("UpdateBillingStatus", "Admin")',
+            type: 'POST',
+            data: {
+                id: billingId,
+                status: 'Paid'
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('Bill marked as paid!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('Error updating bill status. Please try again.');
+                console.error(xhr);
+            }
+        });
+    }
+
+    function deleteBilling(billingId) {
+        if (!confirm('Are you sure you want to delete this billing record?')) return;
+
+        $.ajax({
+            url: '@Url.Action("DeleteBilling", "Admin")',
+            type: 'POST',
+            data: { id: billingId },
+            success: function(response) {
+                if (response.success) {
+                    alert('Billing record deleted!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function(xhr) {
+                alert('Error deleting billing record. Please try again.');
+                console.error(xhr);
+            }
+        });
+    }
+</script>
+

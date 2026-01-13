@@ -1,0 +1,184 @@
+@model List<HOMEOWNER.Models.VehicleRegistration>
+
+@{
+    ViewData["Title"] = "Manage Vehicle Registrations";
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<style>
+    .management-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+        margin-top: 1rem;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .page-title i {
+        color: #4361ee;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .data-table thead {
+        background: linear-gradient(135deg, #4361ee, #3a56d4);
+        color: white;
+    }
+
+    .data-table th {
+        padding: 1rem;
+        font-weight: 600;
+        text-align: left;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+    }
+
+    .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: rgba(67, 97, 238, 0.05);
+    }
+
+    .status-badge {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .status-pending { background: #fff3e0; color: #f57c00; }
+    .status-approved { background: #e8f5e9; color: #388e3c; }
+    .status-rejected { background: #ffebee; color: #c62828; }
+    .status-expired { background: #f3e5f5; color: #7b1fa2; }
+
+    .btn-action {
+        padding: 0.4rem 0.8rem;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-right: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .btn-approve { background: #10b981; color: white; }
+    .btn-reject { background: #ef4444; color: white; }
+    .btn-delete { background: #dc2626; color: white; }
+</style>
+
+<div class="management-container">
+    <div class="page-header">
+        <h2 class="page-title">
+            <i class="fas fa-car"></i>
+            Vehicle Registration Management
+        </h2>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Plate Number</th>
+                <th>Vehicle Type</th>
+                <th>Make & Model</th>
+                <th>Color</th>
+                <th>Owner</th>
+                <th>Status</th>
+                <th>Registered</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var vehicle in Model)
+                {
+                    <tr>
+                        <td><strong>@vehicle.PlateNumber</strong></td>
+                        <td>@vehicle.VehicleType</td>
+                        <td>@vehicle.Make @vehicle.Model</td>
+                        <td>@vehicle.Color</td>
+                        <td>@(vehicle.Homeowner?.FullName ?? "N/A")</td>
+                        <td>
+                            <span class="status-badge status-@vehicle.Status.ToLower()">
+                                @vehicle.Status
+                            </span>
+                        </td>
+                        <td>@vehicle.RegisteredAt.ToString("MMM dd, yyyy")</td>
+                        <td>
+                            @if (vehicle.Status == "Pending")
+                            {
+                                <button class="btn-action btn-approve" onclick="updateStatus(@vehicle.VehicleID, 'Approved')">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                                <button class="btn-action btn-reject" onclick="updateStatus(@vehicle.VehicleID, 'Rejected')">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
+                            }
+                            <button class="btn-action btn-delete" onclick="deleteVehicle(@vehicle.VehicleID)">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 3rem;">
+                        <i class="fas fa-inbox" style="font-size: 3rem; color: #adb5bd;"></i>
+                        <p>No vehicle registrations found</p>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function updateStatus(id, status) {
+        $.post('/VehicleRegistration/UpdateStatus/' + id, { status: status }, function(response) {
+            if (response.success) {
+                location.reload();
+            } else {
+                alert(response.message);
+            }
+        });
+    }
+
+    function deleteVehicle(id) {
+        if (confirm('Are you sure you want to delete this vehicle registration?')) {
+            $.post('/VehicleRegistration/Delete/' + id, function(response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    alert(response.message);
+                }
+            });
+        }
+    }
+</script>
+

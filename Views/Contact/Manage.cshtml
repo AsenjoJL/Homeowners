@@ -1,0 +1,123 @@
+@model IEnumerable<HOMEOWNER.Models.Contact>
+
+@{
+    ViewData["Title"] = "Manage Contacts";
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-address-book me-2"></i>Manage Contacts</h2>
+        <button class="btn btn-primary" onclick="loadAddForm()">
+            <i class="fas fa-plus me-2"></i>Add Contact
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Position</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    @foreach (var contact in Model)
+                    {
+                        <tr>
+                            <td>
+                                @contact.Name
+                                @if (contact.IsEmergency)
+                                {
+                                    <span class="badge bg-danger ms-1">Emergency</span>
+                                }
+                            </td>
+                            <td><span class="badge bg-info">@contact.Category</span></td>
+                            <td>@contact.Position</td>
+                            <td>@contact.PhoneNumber</td>
+                            <td>@contact.Email</td>
+                            <td>
+                                @if (contact.IsActive)
+                                {
+                                    <span class="badge bg-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Inactive</span>
+                                }
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="loadEditForm(@contact.ContactID)" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteContact(@contact.ContactID)" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="7" class="text-center">No contacts found.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal fade" id="contactModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Add Contact</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Content loaded via AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadAddForm() {
+        $('#modalTitle').text('Add Contact');
+        $('#modalBody').load('@Url.Action("Add", "Contact")');
+        $('#contactModal').modal('show');
+    }
+
+    function loadEditForm(id) {
+        $('#modalTitle').text('Edit Contact');
+        $('#modalBody').load('@Url.Action("Edit", "Contact")?id=' + id);
+        $('#contactModal').modal('show');
+    }
+
+    function deleteContact(id) {
+        if (!confirm('Are you sure you want to delete this contact?')) return;
+
+        $.ajax({
+            url: '@Url.Action("Delete", "Contact")',
+            type: 'POST',
+            data: { id: id },
+            success: function(response) {
+                if (response.success) {
+                    alert('Contact deleted successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            }
+        });
+    }
+</script>
+

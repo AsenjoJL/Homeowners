@@ -1,0 +1,811 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOMEOWNER SUBDIVISION - RestNestHome</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/landing.css" asp-append-version="true">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#" data-section="homeSection">
+                <img src="~/logo.png" alt="RestNestHome Logo" class="navlogo">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#" data-section="homeSection">
+                            <i class="fas fa-home me-1"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="aboutSection">
+                            <i class="fas fa-info-circle me-1"></i> About
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="servicesSection">
+                            <i class="fas fa-concierge-bell me-1"></i> Services
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-section="contactSection">
+                            <i class="fas fa-envelope me-1"></i> Contact
+                        </a>
+                    </li>
+                </ul>
+                <a href="/Account/Login" class="btn btn-primary ms-3 pulse-button">
+                    <i class="fas fa-sign-in-alt me-2"></i> Log in
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section class="home page-section active" id="homeSection">
+        <div class="container">
+            <div class="row align-items-center min-vh-100">
+                <div class="col-lg-6 col-md-12 mb-5 mb-lg-0">
+                    <div class="herotext animate__animated animate__fadeInLeft">
+                        <h1 class="herotitle">
+                            Where Your Comfort Feels Like <span class="text-gradient">Home</span>
+                        </h1>
+                        <p class="lead">
+                            Experience comfort and homeliness with a variety of activities to make your stay unforgettable. 
+                            Join our vibrant community where every resident matters.
+                        </p>
+                        <div class="d-flex flex-wrap gap-3 mt-4">
+                            <a href="/Account/Login" class="btn btn-primary btn-glow">
+                                <i class="fas fa-rocket me-2"></i> Get Started
+                            </a>
+                            <a href="#" data-section="aboutSection" class="btn btn-outline-light">
+                                <i class="fas fa-info-circle me-2"></i> Learn More
+                            </a>
+                        </div>
+                        <div class="mt-5 d-flex flex-wrap gap-4">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-check-circle fa-2x me-3" style="color: #4cc9f0;"></i>
+                                <div>
+                                    <strong style="font-size: 1.1rem;">24/7 Security</strong>
+                                    <p class="mb-0" style="font-size: 0.9rem; opacity: 0.9;">Round-the-clock protection</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-users fa-2x me-3" style="color: #4cc9f0;"></i>
+                                <div>
+                                    <strong style="font-size: 1.1rem;">Community Living</strong>
+                                    <p class="mb-0" style="font-size: 0.9rem; opacity: 0.9;">Vibrant neighborhood</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-12">
+                    <div class="heroimage animate__animated animate__fadeInRight">
+                        <img src="~/image2.jpg" alt="Modern Subdivision" class="image floating parallax" data-speed="0.3">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about page-section" id="aboutSection">
+        <div class="container">
+            <!-- Partner Logos -->
+            <div class="row align-items-center text-center mb-5">
+                <div class="col-12 mb-4">
+                    <h3 class="section-subtitle" style="color: var(--text-secondary); font-size: 0.95rem; text-transform: uppercase; letter-spacing: 2px;">
+                        Trusted Partners
+                    </h3>
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <img src="~/agoda.png" alt="Agoda" class="brand-logo logo-hover">
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <img src="~/airbnb.png" alt="Airbnb" class="brand-logo logo-hover">
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <img src="~/booking.png" alt="Booking.com" class="brand-logo logo-hover">
+                </div>
+                <div class="col-md-3 col-6 mb-4">
+                    <img src="~/trivago.png" alt="Trivago" class="brand-logo logo-hover">
+                </div>
+            </div>
+
+            <!-- About Content -->
+            <div class="row align-items-center mt-5">
+                <div class="col-lg-5 col-md-6 mb-5 mb-lg-0">
+                    <div class="text-center">
+                        <img src="~/image3.jpg" alt="About RestNestHome" class="img-fluid floating-2 parallax hover-scale" data-speed="0.2" style="border-radius: var(--radius-xl); box-shadow: var(--shadow-xl);">
+                    </div>
+                </div>
+                <div class="col-lg-7 col-md-6">
+                    <div class="about-content">
+                        <h2 class="about-title animate__animated animate__fadeIn">
+                            Welcome to <span class="text-gradient" style="background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">RestNestHome</span>
+                        </h2>
+                        <p class="about-text animate__animated animate__fadeIn">
+                            <i class="fas fa-quote-left me-2" style="color: var(--primary-color);"></i>
+                            A peaceful and comfortable community where care meets comfort. Nestled in a serene subdivision, 
+                            we offer a welcoming and safe environment for our residents to call home. Our goal is to provide 
+                            the highest level of care, support, and companionship in a homely atmosphere that promotes 
+                            well-being and independence.
+                        </p>
+                        <p class="about-text animate__animated animate__fadeIn">
+                            At <strong style="color: var(--primary-color);">RestNestHome</strong>, we understand the importance of personalized care. 
+                            Whether it's for short-term stays, long-term living, or specialized care, we tailor our services 
+                            to meet the unique needs of each resident. Our dedicated team of professional caregivers ensures 
+                            that everyone receives exceptional care while maintaining their dignity and independence.
+                        </p>
+                        <div class="row mt-4">
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-check-circle fa-lg me-3 mt-1" style="color: var(--accent-color);"></i>
+                                    <div>
+                                        <strong>Personalized Care</strong>
+                                        <p class="mb-0" style="font-size: 0.9rem;">Tailored services for every resident</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-heart fa-lg me-3 mt-1" style="color: var(--accent-color);"></i>
+                                    <div>
+                                        <strong>Compassionate Team</strong>
+                                        <p class="mb-0" style="font-size: 0.9rem;">Professional and caring staff</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-map-marker-alt fa-lg me-3 mt-1" style="color: var(--accent-color);"></i>
+                                    <div>
+                                        <strong>Prime Location</strong>
+                                        <p class="mb-0" style="font-size: 0.9rem;">Peaceful suburban setting</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <div class="d-flex align-items-start">
+                                    <i class="fas fa-calendar-check fa-lg me-3 mt-1" style="color: var(--accent-color);"></i>
+                                    <div>
+                                        <strong>Easy Booking</strong>
+                                        <p class="mb-0" style="font-size: 0.9rem;">Simple online reservation</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h3 class="about-subtitle animate__animated animate__fadeIn mt-4">
+                            <i class="fas fa-calendar-alt me-2"></i> Book Your Stay Today!
+                        </h3>
+                        <p class="about-text animate__animated animate__fadeIn">
+                            We invite you to experience the warmth and compassion of <strong>RestNestHome</strong>. 
+                            Booking your stay is simple! Our online booking platform allows you to easily schedule 
+                            a visit or secure your spot in our subdivision.
+                        </p>
+                        <a href="/Account/Login" class="btn btn-primary mt-3">
+                            <i class="fas fa-calendar-check me-2"></i> Reserve Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services page-section" id="servicesSection">
+        <div class="container">
+            <div class="row text-center mb-5">
+                <div class="col-12">
+                    <h2 class="section-title animate__animated animate__fadeIn">
+                        Our <span class="text-gradient" style="background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Services</span>
+                    </h2>
+                    <p class="section-subtitle animate__animated animate__fadeIn">
+                        Discover the comprehensive range of services we offer to enhance your living experience 
+                        and ensure your peace of mind.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Service Cards -->
+            <div class="row g-4">
+                <!-- Service 1: Security -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="service-card animate__animated animate__fadeInUp hover-lift">
+                        <div class="service-icon icon-bounce">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4 class="service-title">Home Security Services</h4>
+                        <p class="service-text">
+                            Protect your home and loved ones with our comprehensive security solutions. 
+                            Advanced monitoring systems and rapid response teams ensure your safety 24/7.
+                        </p>
+                        <div class="service-hover-content">
+                            <p><i class="fas fa-check me-2"></i>24/7 monitoring and rapid response</p>
+                            <p><i class="fas fa-check me-2"></i>Advanced surveillance systems</p>
+                            <p><i class="fas fa-check me-2"></i>Professional security personnel</p>
+                            <a href="/Account/Login" class="btn btn-outline-primary btn-sm mt-3">
+                                <i class="fas fa-arrow-right me-2"></i> Learn More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service 2: Maintenance -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="service-card animate__animated animate__fadeInUp hover-lift">
+                        <div class="service-icon icon-bounce">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <h4 class="service-title">Home Maintenance Services</h4>
+                        <p class="service-text">
+                            Keep your home in top condition with our professional maintenance services. 
+                            From routine upkeep to emergency repairs, we've got you covered.
+                        </p>
+                        <div class="service-hover-content">
+                            <p><i class="fas fa-check me-2"></i>Professional repairs and regular upkeep</p>
+                            <p><i class="fas fa-check me-2"></i>Emergency response team</p>
+                            <p><i class="fas fa-check me-2"></i>Preventive maintenance programs</p>
+                            <a href="/Account/Login" class="btn btn-outline-primary btn-sm mt-3">
+                                <i class="fas fa-arrow-right me-2"></i> Learn More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Service 3: Subdivision Services -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="service-card animate__animated animate__fadeInUp hover-lift">
+                        <div class="service-icon icon-bounce">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <h4 class="service-title">Subdivision Services</h4>
+                        <p class="service-text">
+                            Comprehensive community-wide services including security and gate control, 
+                            waste management, landscaping, and facility maintenance for all residents.
+                        </p>
+                        <div class="service-hover-content">
+                            <p><i class="fas fa-check me-2"></i>Community-wide services for all residents</p>
+                            <p><i class="fas fa-check me-2"></i>Gate access control</p>
+                            <p><i class="fas fa-check me-2"></i>Landscaping and waste management</p>
+                            <a href="/Account/Login" class="btn btn-outline-primary btn-sm mt-3">
+                                <i class="fas fa-arrow-right me-2"></i> Learn More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact page-section" id="contactSection">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="section-title animate__animated animate__fadeIn">
+                        Get In <span class="text-gradient" style="background: linear-gradient(135deg, var(--primary-color), var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Touch</span>
+                    </h2>
+                    <p class="section-subtitle animate__animated animate__fadeIn">
+                        Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Contact Information -->
+                <div class="col-lg-6 mb-5 mb-lg-0">
+                    <div class="contact-info animate__animated animate__fadeInLeft">
+                        <h4 class="contact-title">
+                            <i class="fas fa-address-card me-2"></i> Contact Information
+                        </h4>
+                        <div class="contact-item">
+                            <i class="fas fa-phone-alt"></i>
+                            <span>+2555-77777(2414)</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>restnesthome@gmail.com</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Mon - Sat : 8:00 A.M. - 5:00 P.M.</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>123 Subdivision Ave, Comfort City</span>
+                        </div>
+
+                        <hr style="border-color: var(--light-gray); margin: var(--spacing-xl) 0;">
+
+                        <!-- Social Media -->
+                        <h5 style="color: var(--text-primary); margin-bottom: var(--spacing-md);">
+                            <i class="fas fa-share-alt me-2"></i> Follow Us
+                        </h5>
+                        <div class="social-icons">
+                            <a href="https://www.facebook.com" target="_blank" class="social-icon" aria-label="Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                            <a href="https://www.youtube.com" target="_blank" class="social-icon" aria-label="YouTube">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                            <a href="https://www.twitter.com" target="_blank" class="social-icon" aria-label="Twitter">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="https://www.instagram.com" target="_blank" class="social-icon" aria-label="Instagram">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="https://www.linkedin.com" target="_blank" class="social-icon" aria-label="LinkedIn">
+                                <i class="fab fa-linkedin-in"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="col-lg-6">
+                    <div class="contact-form animate__animated animate__fadeInRight">
+                        <h4 class="contact-title">
+                            <i class="fas fa-paper-plane me-2"></i> Send Us a Message
+                        </h4>
+                        <form id="contactForm">
+                            <div class="form-group">
+                                <label for="fullName" class="form-label" style="color: var(--text-primary); font-weight: var(--font-weight-medium);">
+                                    <i class="fas fa-user me-2"></i> Full Name
+                                </label>
+                                <input type="text" class="form-control" id="fullName" name="fullName" placeholder="Enter your full name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="form-label" style="color: var(--text-primary); font-weight: var(--font-weight-medium);">
+                                    <i class="fas fa-envelope me-2"></i> Email Address
+                                </label>
+                                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="subject" class="form-label" style="color: var(--text-primary); font-weight: var(--font-weight-medium);">
+                                    <i class="fas fa-tag me-2"></i> Subject
+                                </label>
+                                <input type="text" class="form-control" id="subject" name="subject" placeholder="What is this regarding?">
+                            </div>
+                            <div class="form-group">
+                                <label for="message" class="form-label" style="color: var(--text-primary); font-weight: var(--font-weight-medium);">
+                                    <i class="fas fa-comment me-2"></i> Message
+                                </label>
+                                <textarea class="form-control" id="message" name="message" rows="5" placeholder="Tell us how we can help you..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-glow w-100">
+                                <i class="fas fa-paper-plane me-2"></i> Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="sitefooter">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                    <img src="~/logo.png" alt="RestNestHome Logo" class="footer-logo">
+                    <p style="color: rgba(255, 255, 255, 0.8);">
+                        Where comfort meets community living at its finest. Experience the perfect blend 
+                        of modern amenities and warm hospitality.
+                    </p>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com" target="_blank" class="social-icon" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.youtube.com" target="_blank" class="social-icon" aria-label="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="https://www.twitter.com" target="_blank" class="social-icon" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://www.instagram.com" target="_blank" class="social-icon" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-3 mb-4 mb-lg-0">
+                    <h5>Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="#" data-section="homeSection"><i class="fas fa-chevron-right me-2"></i> Home</a></li>
+                        <li><a href="#" data-section="aboutSection"><i class="fas fa-chevron-right me-2"></i> About</a></li>
+                        <li><a href="#" data-section="servicesSection"><i class="fas fa-chevron-right me-2"></i> Services</a></li>
+                        <li><a href="#" data-section="contactSection"><i class="fas fa-chevron-right me-2"></i> Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-3 mb-4 mb-lg-0">
+                    <h5>Services</h5>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i> Security Services</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i> Maintenance</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i> Community Services</a></li>
+                        <li><a href="/Account/Login"><i class="fas fa-chevron-right me-2"></i> Book Now</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-12">
+                    <h5>Legal</h5>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i> Privacy Policy</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i> Terms of Service</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2"></i> Cookie Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="copyright">
+                        <i class="far fa-copyright me-2"></i> 2025 RestNestHome. All Rights Reserved.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Section Navigation with Animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show home section by default
+            document.getElementById('homeSection').classList.add('active');
+            
+            // Initialize animations on page load
+            setTimeout(() => {
+                animateOnLoad();
+            }, 100);
+
+            // Set up click handlers for navigation
+            document.querySelectorAll('[data-section]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetSection = this.getAttribute('data-section');
+
+                    // Hide all sections with fade out
+                    document.querySelectorAll('.page-section').forEach(section => {
+                        section.style.opacity = '0';
+                        setTimeout(() => {
+                            section.classList.remove('active');
+                        }, 300);
+                    });
+
+                    // Show target section with fade in
+                    setTimeout(() => {
+                        const target = document.getElementById(targetSection);
+                        if (target) {
+                            target.classList.add('active');
+                            setTimeout(() => {
+                                target.style.opacity = '1';
+                                animateSection(target);
+                            }, 50);
+                        }
+                    }, 300);
+
+                    // Update active nav link with animation
+                    document.querySelectorAll('.nav-link').forEach(navLink => {
+                        navLink.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    
+                    // Add click animation
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+
+                    // Scroll to top smoothly
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+
+            // Navbar background change on scroll with parallax
+            let lastScroll = 0;
+            window.addEventListener('scroll', function() {
+                const navbar = document.querySelector('.navbar');
+                const currentScroll = window.pageYOffset;
+                const scrollDelta = currentScroll - lastScroll;
+
+                if (currentScroll > 50) {
+                    navbar.classList.add('scrolled');
+                    navbar.style.transform = `translateY(${scrollDelta > 0 ? '-100%' : '0'})`;
+                } else {
+                    navbar.classList.remove('scrolled');
+                    navbar.style.transform = 'translateY(0)';
+                }
+
+                lastScroll = currentScroll;
+                
+                // Parallax effect for hero section
+                const heroImage = document.querySelector('.heroimage img');
+                if (heroImage && currentScroll < window.innerHeight) {
+                    const parallaxSpeed = currentScroll * 0.5;
+                    heroImage.style.transform = `translateY(${parallaxSpeed}px)`;
+                }
+            });
+
+            // Contact form submission with animation
+            const contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    
+                    // Loading animation
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Sending...';
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('animate-spin');
+                    
+                    // Simulate form submission
+                    setTimeout(() => {
+                        // Success animation
+                        submitBtn.innerHTML = '<i class="fas fa-check me-2"></i> Sent!';
+                        submitBtn.classList.remove('animate-spin');
+                        submitBtn.classList.add('animate-bounce');
+                        
+                        // Show success message
+                        showNotification('Thank you for your message! We will get back to you soon.', 'success');
+                        
+                        // Reset form
+                        setTimeout(() => {
+                            this.reset();
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
+                            submitBtn.classList.remove('animate-bounce');
+                        }, 2000);
+                    }, 1500);
+                });
+            }
+
+            // Enhanced Intersection Observer for scroll animations
+            const observerOptions = {
+                threshold: 0.15,
+                rootMargin: '0px 0px -100px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            
+                            // Add different animations based on element
+                            if (entry.target.classList.contains('service-card')) {
+                                entry.target.classList.add('animate-fade-in-up');
+                                entry.target.style.animationDelay = `${index * 0.1}s`;
+                            } else if (entry.target.classList.contains('contact-item')) {
+                                entry.target.classList.add('animate-fade-in-left');
+                            } else if (entry.target.classList.contains('about-text')) {
+                                entry.target.classList.add('animate-fade-in-right');
+                            } else {
+                                entry.target.classList.add('animate-fade-in-up');
+                            }
+                        }, index * 50);
+                        
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all animatable elements
+            document.querySelectorAll('.service-card, .contact-item, .about-text, .contact-info, .contact-form').forEach(el => {
+                el.style.opacity = '0';
+                observer.observe(el);
+            });
+
+            // Add hover effects to icons
+            document.querySelectorAll('.service-icon, .social-icon').forEach(icon => {
+                icon.addEventListener('mouseenter', function() {
+                    this.classList.add('icon-bounce');
+                });
+                icon.addEventListener('mouseleave', function() {
+                    this.classList.remove('icon-bounce');
+                });
+            });
+
+            // Animate numbers/counters (if any)
+            animateCounters();
+            
+            // Add parallax to background elements
+            addParallaxEffect();
+        });
+
+        // Animate elements on page load
+        function animateOnLoad() {
+            const heroText = document.querySelector('.herotext');
+            const heroImage = document.querySelector('.heroimage');
+            
+            if (heroText) {
+                heroText.style.opacity = '0';
+                heroText.style.transform = 'translateX(-50px)';
+                setTimeout(() => {
+                    heroText.style.transition = 'all 1s ease-out';
+                    heroText.style.opacity = '1';
+                    heroText.style.transform = 'translateX(0)';
+                }, 100);
+            }
+            
+            if (heroImage) {
+                heroImage.style.opacity = '0';
+                heroImage.style.transform = 'translateX(50px)';
+                setTimeout(() => {
+                    heroImage.style.transition = 'all 1s ease-out';
+                    heroImage.style.opacity = '1';
+                    heroImage.style.transform = 'translateX(0)';
+                }, 300);
+            }
+        }
+
+        // Animate section elements when section becomes active
+        function animateSection(section) {
+            const elements = section.querySelectorAll('.service-card, .contact-item, .about-text, .contact-info, .contact-form');
+            elements.forEach((el, index) => {
+                el.style.opacity = '0';
+                setTimeout(() => {
+                    el.style.transition = 'all 0.8s ease-out';
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        }
+
+        // Animate counters
+        function animateCounters() {
+            const counters = document.querySelectorAll('[data-count]');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-count'));
+                const duration = 2000;
+                const increment = target / (duration / 16);
+                let current = 0;
+                
+                const updateCounter = () => {
+                    current += increment;
+                    if (current < target) {
+                        counter.textContent = Math.floor(current);
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target;
+                    }
+                };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting) {
+                        updateCounter();
+                        observer.unobserve(counter);
+                    }
+                });
+                
+                observer.observe(counter);
+            });
+        }
+
+        // Add parallax effect
+        function addParallaxEffect() {
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const parallaxElements = document.querySelectorAll('.parallax');
+                
+                parallaxElements.forEach(element => {
+                    const speed = element.dataset.speed || 0.5;
+                    const yPos = -(scrolled * speed);
+                    element.style.transform = `translateY(${yPos}px)`;
+                });
+            });
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: ${type === 'success' ? '#4cc9f0' : '#e74c3c'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 0.5rem;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                z-index: 10000;
+                opacity: 0;
+                transform: translateX(400px);
+                transition: all 0.3s ease;
+                max-width: 300px;
+            `;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add ripple effect to buttons
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.cssText = `
+                    position: absolute;
+                    width: ${size}px;
+                    height: ${size}px;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.5);
+                    left: ${x}px;
+                    top: ${y}px;
+                    pointer-events: none;
+                    transform: scale(0);
+                    animation: ripple-animation 0.6s ease-out;
+                `;
+                
+                this.style.position = 'relative';
+                this.style.overflow = 'hidden';
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Ripple animation CSS is already in landing.css
+    </script>
+</body>
+</html>

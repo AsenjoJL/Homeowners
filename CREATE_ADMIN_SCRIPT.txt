@@ -1,0 +1,45 @@
+// Quick script to create an admin account
+// Run this in a C# interactive window or create a simple console app
+
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
+using System.Security.Cryptography;
+
+// Configuration
+var adminEmail = "admin@homeowner.com";
+var adminPassword = "Admin123!"; // CHANGE THIS!
+var adminName = "System Administrator";
+
+// Generate password hash
+var saltBytes = RandomNumberGenerator.GetBytes(16);
+var hashBytes = KeyDerivation.Pbkdf2(
+    password: adminPassword,
+    salt: saltBytes,
+    prf: KeyDerivationPrf.HMACSHA256,
+    iterationCount: 100000,
+    numBytesRequested: 32);
+
+var passwordHash = $"{Convert.ToBase64String(saltBytes)}:{Convert.ToBase64String(hashBytes)}";
+
+// Output for Firebase Console
+Console.WriteLine("=== ADMIN ACCOUNT DATA ===");
+Console.WriteLine($"AdminID: 1");
+Console.WriteLine($"FullName: {adminName}");
+Console.WriteLine($"Email: {adminEmail}");
+Console.WriteLine($"PasswordHash: {passwordHash}");
+Console.WriteLine($"Role: Admin");
+Console.WriteLine($"OfficeLocation: Main Office");
+Console.WriteLine($"Status: Active");
+Console.WriteLine("\n=== FIREBASE FIRESTORE DOCUMENT ===");
+Console.WriteLine($"Collection: admins");
+Console.WriteLine($"Document ID: 1");
+Console.WriteLine($"\nCopy this JSON to Firebase Console:");
+Console.WriteLine($@"{{
+  ""AdminID"": 1,
+  ""FullName"": ""{adminName}"",
+  ""Email"": ""{adminEmail}"",
+  ""PasswordHash"": ""{passwordHash}"",
+  ""Role"": ""Admin"",
+  ""OfficeLocation"": ""Main Office"",
+  ""Status"": ""Active""
+}}");
+
