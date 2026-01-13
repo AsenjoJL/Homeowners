@@ -104,7 +104,7 @@ namespace HOMEOWNER.Controllers
         {
             if (id == null) return NotFound();
 
-            var facility = await _context.Facilities.FindAsync(id);
+            var facility = await _data.GetFacilityByIdAsync(id.Value);
             if (facility == null) return NotFound();
 
             return View(facility);
@@ -123,8 +123,13 @@ namespace HOMEOWNER.Controllers
                 {
                     if (ImageFile != null && ImageFile.Length > 0)
                     {
+                        var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "facilities");
+                        if (!Directory.Exists(uploadsFolder))
+                            Directory.CreateDirectory(uploadsFolder);
+
                         var fileName = Guid.NewGuid().ToString() + Path.GetExtension(ImageFile.FileName);
-                        var filePath = Path.Combine("wwwroot/images/facilities", fileName);
+                        var filePath = Path.Combine(uploadsFolder, fileName);
+                        
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await ImageFile.CopyToAsync(stream);
@@ -132,12 +137,12 @@ namespace HOMEOWNER.Controllers
                         facility.ImageUrl = "/images/facilities/" + fileName;
                     }
 
-                    _context.Update(facility);
-                    await _context.SaveChangesAsync();
+                    await _data.UpdateFacilityAsync(facility);
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception ex)
                 {
-                    if (!_context.Facilities.Any(e => e.FacilityID == id)) return NotFound();
+                    _logger.LogError(ex, "Error updating facility");
+                    if (await _data.GetFacilityByIdAsync(id) == null) return NotFound();
                     else throw;
                 }
                 return RedirectToAction(nameof(Index));
@@ -150,11 +155,10 @@ namespace HOMEOWNER.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var facility = await _context.Facilities.FindAsync(id);
+            var facility = await _data.GetFacilityByIdAsync(id);
             if (facility != null)
             {
-                _context.Facilities.Remove(facility);
-                await _context.SaveChangesAsync();
+                await _data.DeleteFacilityAsync(id);
             }
             return RedirectToAction(nameof(Index));
         }

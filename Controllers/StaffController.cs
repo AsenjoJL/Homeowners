@@ -217,7 +217,7 @@ namespace HOMEOWNER.Controllers
 
 
         // Staff ID retrieval from session (using BaseController method)
-        private int GetCurrentStaffId()
+        private new int GetCurrentStaffId()
         {
             return base.GetCurrentStaffId();
         }

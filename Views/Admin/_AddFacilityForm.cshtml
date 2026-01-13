@@ -1,6 +1,6 @@
 ﻿@model HOMEOWNER.Models.Facility
 
-<form asp-controller="Facility" asp-action="Add" method="post" enctype="multipart/form-data">
+<form id="addFacilityForm" asp-controller="Facility" asp-action="Add" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label>Facility Name</label>
         <input type="text" class="form-control" asp-for="FacilityName" required />

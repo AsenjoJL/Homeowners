@@ -1,0 +1,108 @@
+@model HOMEOWNER.Models.Poll
+
+@{
+    ViewData["Title"] = "Create Poll";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0"><i class="fas fa-poll me-2"></i>Create New Poll</h4>
+        </div>
+        <div class="card-body">
+            <form id="createPollForm">
+                <div class="mb-3">
+                    <label for="Question" class="form-label">Poll Question *</label>
+                    <input type="text" class="form-control" id="Question" name="Question" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Poll Options *</label>
+                    <div id="optionsContainer">
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" name="Options[]" placeholder="Option 1" required>
+                        </div>
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" name="Options[]" placeholder="Option 2" required>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-secondary" id="addOptionBtn">
+                        <i class="fas fa-plus"></i> Add Option
+                    </button>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="ExpiresAt" class="form-label">Expiration Date *</label>
+                    <input type="datetime-local" class="form-control" id="ExpiresAt" name="ExpiresAt" required>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-check me-2"></i>Create Poll
+                    </button>
+                    <a href="@Url.Action("Index")" class="btn btn-secondary">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    let optionCount = 2;
+    
+    $('#addOptionBtn').click(function() {
+        optionCount++;
+        const optionHtml = `
+            <div class="input-group mb-2">
+                <input type="text" class="form-control" name="Options[]" placeholder="Option ${optionCount}" required>
+                <button type="button" class="btn btn-danger btn-sm remove-option">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        `;
+        $('#optionsContainer').append(optionHtml);
+    });
+    
+    $(document).on('click', '.remove-option', function() {
+        $(this).closest('.input-group').remove();
+    });
+    
+    $('#createPollForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        const options = [];
+        $('input[name="Options[]"]').each(function() {
+            if ($(this).val().trim()) {
+                options.push($(this).val().trim());
+            }
+        });
+        
+        const formData = {
+            Question: $('#Question').val(),
+            Options: options,
+            ExpiresAt: $('#ExpiresAt').val()
+        };
+        
+        $.ajax({
+            url: '@Url.Action("Create", "Poll")',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(formData),
+            success: function(response) {
+                if (response.success) {
+                    alert('Poll created successfully!');
+                    window.location.href = '@Url.Action("Index", "Poll")';
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function() {
+                alert('An error occurred while creating the poll.');
+            }
+        });
+    });
+});
+</script>

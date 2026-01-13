@@ -2,55 +2,38 @@
 using HOMEOWNER.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
-[Authorize(Roles = "Homeowner,Admin,Staff")]
-public class ForumController : Controller
+namespace HOMEOWNER.Controllers
 {
-    private readonly ApplicationDbContext _context;
+    [Authorize(Roles = "Homeowner,Admin,Staff")]
+    public class ForumController : BaseController
+    {
     private readonly IWebHostEnvironment _hostingEnvironment;
 
-    public ForumController(ApplicationDbContext context, IWebHostEnvironment hostingEnvironment)
+    public ForumController(IDataService data, IWebHostEnvironment hostingEnvironment) : base(data)
     {
-        _context = context;
         _hostingEnvironment = hostingEnvironment;
     }
 
     // Original Index action (for standalone forum page)
-    public async Task<IActionResult> Index()
+    public IActionResult Index()
     {
-        var posts = await GetForumPosts();
+        // Get forum posts from Firebase
+        var posts = _data.ForumPosts
+            .OrderByDescending(p => p.CreatedAt)
+            .ToList();
+
         return View(posts);
     }
 
     // New action for embedded forum content
-    public async Task<IActionResult> Embedded()
+    public IActionResult Embedded()
     {
-        var posts = await GetForumPosts();
-        return PartialView("_ForumPartial", posts);
-    }
-
-    private async Task<List<ForumPost>> GetForumPosts()
-    {
-        var posts = await _context.ForumPosts
-            .Include(p => p.Homeowner)
-            .Include(p => p.Comments)
-                .ThenInclude(c => c.Homeowner)
-            .Include(p => p.Reactions)
-                .ThenInclude(r => r.Homeowner)
+        var posts = _data.ForumPosts
             .OrderByDescending(p => p.CreatedAt)
-            .ToListAsync();
-
-        var settings = await _context.CommunitySettings.FirstOrDefaultAsync();
-        if (settings == null)
-        {
-            settings = new CommunitySettings();
-            _context.CommunitySettings.Add(settings);
-            await _context.SaveChangesAsync();
-        }
-
-        ViewBag.CommunitySettings = settings;
-        return posts;
+            .ToList();
+            
+        return PartialView("_ForumPartial", posts);
     }
 
     [HttpPost]
@@ -102,11 +85,10 @@ public class ForumController : Controller
             post.MusicTitle = Path.GetFileNameWithoutExtension(musicFile.FileName);
         }
 
-        // 5. Save to database
+        // 5. Save to Firebase
         try
         {
-            _context.ForumPosts.Add(post);
-            await _context.SaveChangesAsync();
+            await _data.AddForumPostAsync(post);
             return Ok(new { PostId = post.ForumPostID });
         }
         catch (Exception ex)
@@ -136,9 +118,7 @@ public class ForumController : Controller
             comment.MediaUrl = mediaPath;
         }
 
-        _context.ForumComments.Add(comment);
-        await _context.SaveChangesAsync();
-
+        await _data.AddForumCommentAsync(comment);
         return Ok();
     }
 
@@ -149,16 +129,10 @@ public class ForumController : Controller
         if (homeownerId == null) return Unauthorized();
 
         // Check if the user already reacted to this post
-        var existingReaction = await _context.Reactions
-            .FirstOrDefaultAsync(r => r.ForumPostID == postId && r.HomeownerID == homeownerId.Value);
+        var existingReaction = _data.Reactions
+            .FirstOrDefault(r => r.ForumPostID == postId && r.HomeownerID == homeownerId.Value);
 
-        if (existingReaction != null)
-        {
-            // Update existing reaction
-            existingReaction.ReactionType = reactionType;
-            existingReaction.CreatedAt = DateTime.Now;
-        }
-        else
+        if (existingReaction == null)
         {
             // Create new reaction
             var reaction = new Reaction
@@ -168,10 +142,9 @@ public class ForumController : Controller
                 ReactionType = reactionType,
                 CreatedAt = DateTime.Now
             };
-            _context.Reactions.Add(reaction);
+            await _data.AddReactionAsync(reaction);
         }
 
-        await _context.SaveChangesAsync();
         return Ok();
     }
 
@@ -199,49 +172,16 @@ public class ForumController : Controller
     [HttpPost]
     public async Task<IActionResult> UpdateBackground(IFormFile backgroundImage, string customCSS)
     {
-        var settings = await _context.CommunitySettings.FirstOrDefaultAsync();
-        if (settings == null)
-        {
-            settings = new CommunitySettings();
-            _context.CommunitySettings.Add(settings);
-        }
-
-        if (backgroundImage != null && backgroundImage.Length > 0)
-        {
-            var bgPath = await UploadFile(backgroundImage, "backgrounds");
-            settings.BackgroundImageUrl = bgPath;
-        }
-
-        if (!string.IsNullOrEmpty(customCSS))
-        {
-            settings.CustomCSS = customCSS;
-        }
-
-        settings.LastUpdated = DateTime.Now;
-        await _context.SaveChangesAsync();
-
+        // TODO: Implement CommunitySettings in Firebase
         return RedirectToAction("Index");
     }
 
     [HttpPost]
     public async Task<IActionResult> SetFeaturedMusic(IFormFile musicFile)
     {
-        var settings = await _context.CommunitySettings.FirstOrDefaultAsync();
-        if (settings == null)
-        {
-            settings = new CommunitySettings();
-            _context.CommunitySettings.Add(settings);
-        }
-
-        if (musicFile != null && musicFile.Length > 0)
-        {
-            var musicPath = await UploadFile(musicFile, "featured-music");
-            settings.FeaturedMusicUrl = musicPath;
-            settings.LastUpdated = DateTime.Now;
-            await _context.SaveChangesAsync();
-        }
-
-        return Json(new { success = true, musicUrl = settings.FeaturedMusicUrl });
+        // TODO: Implement CommunitySettings in Firebase
+        return Json(new { success = true, musicUrl = "" });
     }
 
+    }
 }

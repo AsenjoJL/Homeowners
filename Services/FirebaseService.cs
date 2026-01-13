@@ -213,6 +213,12 @@ namespace HOMEOWNER.Services
 
         public async Task AddFacilityAsync(Facility facility)
         {
+            // Auto-generate FacilityID if not set
+            if (facility.FacilityID == 0)
+            {
+                var allFacilities = await GetFacilitiesAsync();
+                facility.FacilityID = allFacilities.Any() ? allFacilities.Max(f => f.FacilityID) + 1 : 1;
+            }
             await FacilitiesCollection.Document(facility.FacilityID.ToString()).SetAsync(facility);
         }
 
@@ -447,6 +453,12 @@ namespace HOMEOWNER.Services
 
         public async Task AddEventAsync(EventModel eventModel)
         {
+            // Auto-generate EventID if not set
+            if (eventModel.EventID == 0)
+            {
+                var allEvents = await GetEventsAsync();
+                eventModel.EventID = allEvents.Any() ? allEvents.Max(e => e.EventID) + 1 : 1;
+            }
             await EventsCollection.Document(eventModel.EventID.ToString()).SetAsync(eventModel);
         }
 
