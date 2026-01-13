@@ -17,25 +17,24 @@ namespace HOMEOWNER.Controllers
         }
 
 
+        // TEMPORARILY DISABLED - Uses SQL Server instead of Firebase
+        // TODO: Implement using IDataService (Firebase)
         private void ExpireOldReservations()
         {
-            var now = DateTime.Now;
-
-            var approvedReservations = _context.Reservations
-                .Where(r => r.Status == "Approved")
-                .ToList();
-
-            foreach (var reservation in approvedReservations)
-            {
-                var endDateTime = reservation.ReservationDate.Date + reservation.EndTime;
-                if (endDateTime <= now)
-                {
-                    reservation.Status = "Expired";
-                    reservation.UpdatedAt = now;
-                }
-            }
-
-            _context.SaveChanges();
+            // var now = DateTime.Now;
+            // var approvedReservations = _context.Reservations
+            //     .Where(r => r.Status == "Approved")
+            //     .ToList();
+            // foreach (var reservation in approvedReservations)
+            // {
+            //     var endDateTime = reservation.ReservationDate.Date + reservation.EndTime;
+            //     if (endDateTime <= now)
+            //     {
+            //         reservation.Status = "Expired";
+            //         reservation.UpdatedAt = now;
+            //     }
+            // }
+            // _context.SaveChanges();
         }
 
 
@@ -44,32 +43,28 @@ namespace HOMEOWNER.Controllers
             var homeownerId = HttpContext.Session.GetInt32("HomeownerID");
             if (homeownerId == null) return RedirectToAction("Login", "Account");
 
+            // TEMPORARILY DISABLED - Uses SQL Server instead of Firebase
+            // ExpireOldReservations();
 
-            ExpireOldReservations(); // 🔧 Call it here
+            // TODO: Implement using IDataService (Firebase)
+            // For now, return empty lists to prevent crashes
+            List<Facility> facilities = new List<Facility>();
+            // facilities = _context.Facilities
+            //     .Where(f => f.AvailabilityStatus == "Available")
+            //     .ToList();
 
+            // var reservations = _context.Reservations
+            //     .Where(r => r.Status != "Expired")
+            //     .Include(r => r.Facility)
+            //     .OrderByDescending(r => r.ReservationDate)
+            //     .ToList();
 
+            // int activityCount = _context.Reservations
+            //     .Where(r => r.HomeownerID == homeownerId && r.Status == "Approved")
+            //     .Count();
 
-            // Fetch available facilities
-            List<Facility> facilities = _context.Facilities
-                .Where(f => f.AvailabilityStatus == "Available")
-                .ToList();
-
-
-
-            // For admin or homeowner, show only current non-expired reservations
-            var reservations = _context.Reservations
-                .Where(r => r.Status != "Expired") // Filter out expired reservations
-                .Include(r => r.Facility)
-                .OrderByDescending(r => r.ReservationDate)
-                .ToList();
-
-
-            // ✅ Count reservations only for the logged-in homeowner
-            int activityCount = _context.Reservations
-                .Where(r => r.HomeownerID == homeownerId && r.Status == "Approved")
-                .Count();
-
-            ViewBag.ActivityCount = activityCount; // Send count to the view
+            ViewBag.ActivityCount = 0; // Placeholder
+            TempData["Info"] = "Reservations feature is temporarily unavailable. Firebase implementation pending.";
 
             return View(facilities);
         }

@@ -1,254 +1,229 @@
 ﻿@{
     var staffName = ViewData["StaffName"]?.ToString() ?? "Unknown Staff";
     var position = ViewData["Position"]?.ToString() ?? "Unknown";
-
     var pendingCount = ViewData["PendingCount"] as int? ?? 0;
     var completedCount = ViewData["CompletedCount"] as int? ?? 0;
-
     var pendingRequests = ViewData["PendingRequests"] as List<ServiceRequest> ?? new List<ServiceRequest>();
     var completedRequests = ViewData["CompletedRequests"] as List<ServiceRequest> ?? new List<ServiceRequest>();
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard - @position Management</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/modern-dashboard.css" asp-append-version="true">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <!-- Logo Section -->
+            <div class="profile-section">
+                <img src="~/logo.png" alt="Logo" class="profile-img" style="border-radius: 12px;" />
+                <p style="font-size: 1.1rem; font-weight: 600; margin-top: 1rem;">@staffName</p>
+                <p style="font-size: 0.875rem; color: rgba(255, 255, 255, 0.7);">@position Manager</p>
+            </div>
 
-@{
-    Layout = "~/Views/Shared/_Layout.cshtml"; // make sure this is set properly
-}
+            <!-- Navigation Menu -->
+            <div class="sidebar-header">Navigation</div>
+            <nav class="menu">
+                <a href="#" id="dashboard-link" class="active">
+                    <i class="fas fa-home"></i> <span>Dashboard</span>
+                </a>
+                <a href="#" id="management-nav">
+                    <i class="fas fa-tasks"></i> <span>Management</span>
+                </a>
+                <a href="#">
+                    <i class="fas fa-calendar-alt"></i> <span>Calendar</span>
+                </a>
+                <a href="#">
+                    <i class="fas fa-chart-bar"></i> <span>Reports</span>
+                </a>
+            </nav>
 
+            <!-- Account Section -->
+            <div class="sidebar-header">Account</div>
+            <nav class="menu">
+                <a href="#">
+                    <i class="fas fa-cog"></i> <span>Settings</span>
+                </a>
+                <a asp-controller="Account" asp-action="Logout">
+                    <i class="fas fa-sign-out-alt"></i> <span>Log Out</span>
+                </a>
+            </nav>
+        </aside>
 
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Navigation -->
+            <div class="top-nav">
+                <div class="page-title">
+                    <h1 id="content-title">@position Dashboard</h1>
+                </div>
+                <div class="nav-actions">
+                    <button class="forum-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        <i class="fas fa-bell"></i> Notifications
+                    </button>
+                </div>
+            </div>
 
-<div class="dashboard-container">
-    <aside class="sidebar">
-        <div class="logo">
-            <img src="~/logo.png" alt="Company Logo">
-        </div>
-        <div class="staff-info">
-            <p><strong>@staffName</strong></p>
-            <p>@position Manager</p>
-        </div>
-        <ul class="nav-menu">
-            <li><a href="#" id="dashboard-link"><i class="fas fa-home"></i> Dashboard</a></li>
-            <li><a href="#"><i class="fas fa-calendar-alt"></i> Calendar</a></li>
-            <li><a href="#" id="management-nav"><i class="fas fa-cogs"></i> Management</a></li>
-        </ul>
-    </aside>
+            <!-- Dashboard Content -->
+            <div id="dashboard-content">
+                <div id="dynamic-content">
+                    <!-- Welcome Box -->
+                    <div class="content-box">
+                        <h2>Welcome, @staffName! 👋</h2>
+                        <p class="intro">Manage your @position.ToLower() tasks efficiently. Track pending and completed service requests all in one place.</p>
+                    </div>
 
-    <main class="content">
-        <!-- Dashboard Content (Always Displayed Initially) -->
-        <div id="dashboard-content">
-            <header class="dashboard-header">
-                <h2>Dashboard</h2>
-            </header>
+                    <!-- Stats Cards -->
+                    @if (position == "Maintenance")
+                    {
+                        <div class="stats-container">
+                            <div class="stat-card reservations">
+                                <h3>Pending Maintenance</h3>
+                                <p>Awaiting Action</p>
+                                <span class="stat-value">@pendingRequests.Count(r => r.Category == "Maintenance")</span>
+                            </div>
+                            <div class="stat-card payments">
+                                <h3>Completed Tasks</h3>
+                                <p>This Month</p>
+                                <span class="stat-value">@completedRequests.Count(r => r.Category == "Maintenance")</span>
+                            </div>
+                            <div class="stat-card requests">
+                                <h3>Total Requests</h3>
+                                <p>All Time</p>
+                                <span class="stat-value">@(pendingRequests.Count(r => r.Category == "Maintenance") + completedRequests.Count(r => r.Category == "Maintenance"))</span>
+                            </div>
+                        </div>
+                    }
+                    else if (position == "Security")
+                    {
+                        <div class="stats-container">
+                            <div class="stat-card reservations">
+                                <h3>Pending Security</h3>
+                                <p>Awaiting Action</p>
+                                <span class="stat-value">@pendingRequests.Count(r => r.Category == "Security")</span>
+                            </div>
+                            <div class="stat-card payments">
+                                <h3>Completed Tasks</h3>
+                                <p>This Month</p>
+                                <span class="stat-value">@completedRequests.Count(r => r.Category == "Security")</span>
+                            </div>
+                            <div class="stat-card requests">
+                                <h3>Total Requests</h3>
+                                <p>All Time</p>
+                                <span class="stat-value">@(pendingRequests.Count(r => r.Category == "Security") + completedRequests.Count(r => r.Category == "Security"))</span>
+                            </div>
+                        </div>
+                    }
 
-            <h2>Welcome, @staffName (@position)</h2>
-
-            <!-- Category-Specific Cards -->
-            @if (position == "Maintenance")
-            {
-                <div class="dashboard-cards">
-                    <div class="card pending maintenance-card">
-                        <i class="fas fa-wrench"></i>
-                        <h4>Pending</h4>
-                        <div class="count-box">@pendingRequests.Count(r => r.Category == "Maintenance")</div>
+                    <!-- Quick Actions -->
+                    <div class="content-box">
+                        <h2>Quick Actions</h2>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                            <a href="#" id="management-nav-btn" class="cta-btn" style="text-align: center;">
+                                <i class="fas fa-tasks"></i> View All Tasks
+                            </a>
+                            <a href="#" class="cta-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-align: center;">
+                                <i class="fas fa-check-circle"></i> Mark Complete
+                            </a>
+                            <a href="#" class="cta-btn" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); text-align: center;">
+                                <i class="fas fa-chart-line"></i> View Reports
+                            </a>
+                        </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="dashboard-cards">
-                    <div class="card completed maintenance-card">
-                        <i class="fas fa-check-double"></i>
-                        <h4>Completed</h4>
-                        <div class="count-box">@completedRequests.Count(r => r.Category == "Maintenance")</div>
-                    </div>
-                </div>
-            }
-            else if (position == "Security")
-            {
-                <div class="dashboard-cards">
-                    <div class="card pending security-card">
-                        <i class="fas fa-shield-alt"></i>
-                        <h4>Pending</h4>
-                        <div class="count-box">@pendingRequests.Count(r => r.Category == "Security")</div>
-                    </div>
-                </div>
+            <!-- Management Content (Initially Hidden) -->
+            <div id="management-content" style="display: none;">
+                <!-- This content will be replaced by AJAX when Management is clicked -->
+            </div>
+        </main>
+    </div>
 
-                <div class="dashboard-cards">
-                    <div class="card completed security-card">
-                        <i class="fas fa-check-circle"></i>
-                        <h4>Completed</h4>
-                        <div class="count-box">@completedRequests.Count(r => r.Category == "Security")</div>
-                    </div>
-                </div>
-            }
-        </div>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
 
-        <!-- Management Content (Initially Hidden) -->
-        <div id="management-content" style="display: none;">
-            <!-- This content will be replaced by AJAX when Management is clicked -->
-        </div>
-    </main>
-</div>
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Mobile Sidebar Toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script>
-    $(document).ready(function() {
-        // Show Dashboard content and hide Management content when Dashboard is clicked
-        $('#dashboard-link').click(function(event) {
-            event.preventDefault(); // Prevent default anchor behavior
-
-            $('#dashboard-content').show(); // Show Dashboard content
-            $('#management-content').hide(); // Hide Management content
-
-            // Optionally, highlight the active link
-            $('.nav-menu a').removeClass('active');
-            $(this).addClass('active');
+        // Animate menu items on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuItems = document.querySelectorAll('.menu a');
+            menuItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-20px)';
+                setTimeout(() => {
+                    item.style.transition = 'all 0.3s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                }, index * 50);
+            });
         });
 
-        // Show Management content and hide Dashboard content when Management is clicked
-        $('#management-nav').click(function(event) {
-            event.preventDefault(); // Prevent default anchor behavior
-
-            // Perform AJAX request to load the Management view
-            $.ajax({
-                url: '@Url.Action("Management", "Staff")',
-                type: 'GET',
-                success: function(data) {
-                    $('#management-content').html(data); // Replace the content in the Management section
-                    $('#dashboard-content').hide(); // Hide Dashboard content
-                    $('#management-content').show(); // Show Management content
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error loading management page:", error);
+        $(document).ready(function() {
+            // Show Dashboard content
+            $('#dashboard-link').click(function(event) {
+                event.preventDefault();
+                $('#dashboard-content').show();
+                $('#management-content').hide();
+                $('#content-title').text('@position Dashboard');
+                
+                $('.menu a').removeClass('active');
+                $(this).addClass('active');
+                
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
                 }
             });
 
-            // Optionally, highlight the active link
-            $('.nav-menu a').removeClass('active');
-            $(this).addClass('active');
+            // Show Management content
+            $('#management-nav, #management-nav-btn').click(function(event) {
+                event.preventDefault();
+                
+                $.ajax({
+                    url: '@Url.Action("Management", "Staff")',
+                    type: 'GET',
+                    success: function(data) {
+                        $('#management-content').html(data);
+                        $('#dashboard-content').hide();
+                        $('#management-content').show();
+                        $('#content-title').text('Task Management');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error loading management page:", error);
+                        alert('Error loading management content');
+                    }
+                });
+                
+                $('.menu a').removeClass('active');
+                $('#management-nav').addClass('active');
+                
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
+            });
         });
-    });
-</script>
-
-<style>
-    .dashboard-container {
-        display: flex;
-        height: 100vh;
-        gap: 20px;
-    }
-
-    .sidebar {
-        background: #2C3E50;
-        padding: 20px;
-        width: 260px;
-        border-right: 1px solid #ddd;
-        color: white;
-    }
-
-        .sidebar .logo img {
-            max-width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .sidebar .staff-info p {
-            margin: 5px 0;
-            font-size: 16px;
-            color: #ddd;
-        }
-
-    .nav-menu {
-        list-style: none;
-        padding: 0;
-    }
-
-        .nav-menu li {
-            margin-bottom: 15px;
-        }
-
-        .nav-menu a {
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            font-size: 18px;
-            border-radius: 5px;
-            transition: background 0.3s ease;
-            color: #ddd;
-        }
-
-            .nav-menu a:hover {
-                background: #34495E;
-                color: #FFFFFF;
-            }
-
-    .content {
-        flex: 1;
-        background: #ecf0f1;
-        padding: 20px;
-        border-radius: 10px;
-    }
-
-    .dashboard-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px;
-        background: #f0f4f8;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .dashboard-cards {
-        display: flex;
-        gap: 20px;
-        justify-content: center;
-        margin-top: 20px;
-        flex-wrap: wrap;
-    }
-
-    .card {
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        flex: 1;
-        min-width: 250px;
-    }
-
-        .card i {
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-
-    .count-box {
-        margin-top: 10px;
-        padding: 15px;
-        background: #f0f4f8;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        font-size: 24px;
-        font-weight: bold;
-        text-align: center;
-    }
-
-    .pending {
-        background: #ffcccc;
-    }
-
-    .completed {
-        background: #d4edda;
-    }
-
-    .maintenance-card {
-        border-left: 5px solid #007bff;
-    }
-
-    .security-card {
-        border-left: 5px solid #6c757d;
-    }
-
-    /* Optionally, you can style the active nav link */
-    .nav-menu a.active {
-        background: #34495E;
-        color: #fff;
-    }
-</style>
+    </script>
+</body>
+</html>

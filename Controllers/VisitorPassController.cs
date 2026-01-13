@@ -14,6 +14,14 @@ namespace HOMEOWNER.Controllers
         {
         }
 
+        // Homeowner: Request Visitor Pass (Alias for dashboard link)
+        [Authorize(Roles = "Homeowner")]
+        [HttpGet]
+        public IActionResult Request()
+        {
+            return PartialView("Request");
+        }
+
         // Homeowner: Request Visitor Pass
         [Authorize(Roles = "Homeowner")]
         [HttpGet]

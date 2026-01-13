@@ -380,7 +380,7 @@ namespace HOMEOWNER.Controllers
 
         // Handle Add Event Submission (POST)
         [HttpPost]
-        public IActionResult AddEvent(EventModel model)
+        public async Task<IActionResult> AddEvent(EventModel model)
         {
             ViewBag.Categories = GetEventCategories();
 
@@ -391,26 +391,16 @@ namespace HOMEOWNER.Controllers
                     ModelState.AddModelError("EventDate", "Please select a valid event date.");
                 }
 
-                return PartialView("_AddEditEventPartial", model); // return partial with errors
+                return PartialView("_AddEditEventPartial", model);
             }
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_config.GetConnectionString("HOME_DB")))
-                {
-                    SqlCommand cmd = new SqlCommand(@"INSERT INTO Events (Title, Description, EventDate, Category, CreatedBy, Location)
-                                   VALUES (@Title, @Description, @EventDate, @Category, @CreatedBy, @Location)", conn);
-
-                    cmd.Parameters.AddWithValue("@Title", model.Title);
-                    cmd.Parameters.AddWithValue("@Description", model.Description ?? string.Empty);
-                    cmd.Parameters.AddWithValue("@EventDate", model.EventDate);
-                    cmd.Parameters.AddWithValue("@Category", model.Category ?? "General");
-                    cmd.Parameters.AddWithValue("@CreatedBy", GetCurrentAdminID());
-                    cmd.Parameters.AddWithValue("@Location", model.Location ?? "Not set");
-
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                }
+                // Set created by admin ID
+                model.CreatedBy = GetCurrentAdminID();
+                
+                // Add event to Firebase
+                await _data.AddEventAsync(model);
 
                 return Json(new { success = true, message = "Event added successfully!" });
             }
@@ -418,7 +408,7 @@ namespace HOMEOWNER.Controllers
             {
                 Console.WriteLine("Error: " + ex.Message);
                 ModelState.AddModelError(string.Empty, "An error occurred while saving.");
-                return PartialView("_AddEditEventPartial", model);
+                return Json(new { success = false, message = "An error occurred while saving the event." });
             }
         }
 
@@ -426,30 +416,10 @@ namespace HOMEOWNER.Controllers
 
         // GET: Edit Event
         [HttpGet]
-        public IActionResult EditEvent(int id)
+        public async Task<IActionResult> EditEvent(int id)
         {
-            EventModel eventModel = new EventModel(); // Initialize with a new instance
-
-            using (SqlConnection conn = new SqlConnection(_config.GetConnectionString("HOME_DB")))
-            {
-                SqlCommand cmd = new SqlCommand("SELECT * FROM Events WHERE EventID = @EventID", conn);
-                cmd.Parameters.AddWithValue("@EventID", id);
-                conn.Open();
-                SqlDataReader reader = cmd.ExecuteReader();
-                if (reader.Read())
-                {
-                    eventModel = new EventModel
-                    {
-                        EventID = (int)reader["EventID"],
-                        Title = reader["Title"].ToString(),
-                        Description = reader["Description"].ToString(),
-                        EventDate = (DateTime)reader["EventDate"],
-                        Category = reader["Category"].ToString(),
-                        Location = reader["Location"]?.ToString()
-                    };
-                }
-            }
-
+            var eventModel = await _data.GetEventByIdAsync(id);
+            
             if (eventModel == null)
                 return NotFound();
 
@@ -459,7 +429,7 @@ namespace HOMEOWNER.Controllers
 
         // POST: Edit Event
         [HttpPost]
-        public IActionResult EditEvent(EventModel model)
+        public async Task<IActionResult> EditEvent(EventModel model)
         {
             ViewBag.Categories = GetEventCategories();
 
@@ -470,60 +440,30 @@ namespace HOMEOWNER.Controllers
                     ModelState.AddModelError("EventDate", "Please select a valid event date.");
                 }
 
-                return PartialView("_AddEditEventPartial", model); // Returning partial view here for AJAX to reload
+                return PartialView("_AddEditEventPartial", model);
             }
 
             try
             {
-                using (SqlConnection conn = new SqlConnection(_config.GetConnectionString("HOME_DB")))
-                {
-                    SqlCommand cmd = new SqlCommand(@"UPDATE Events SET Title = @Title, Description = @Description,
-                                              EventDate = @EventDate, Category = @Category, Location = @Location
-                                              WHERE EventID = @EventID", conn);
-
-                    cmd.Parameters.AddWithValue("@Title", model.Title);
-                    cmd.Parameters.AddWithValue("@Description", model.Description ?? string.Empty);
-                    cmd.Parameters.AddWithValue("@EventDate", model.EventDate);
-                    cmd.Parameters.AddWithValue("@Category", model.Category ?? "General");
-                    cmd.Parameters.AddWithValue("@Location", model.Location ?? "Not set");
-                    cmd.Parameters.AddWithValue("@EventID", model.EventID);
-
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                }
-
-                return Json(new { success = true, message = "Event updated successfully!" });  // Return success to reload event list on success
-            }
-            catch (SqlException ex)
-            {
-                ModelState.AddModelError(string.Empty, "Database error occurred while updating the event.");
-                Console.WriteLine("SQL Error: " + ex.Message);
-                return Json(new { success = false, message = "Error updating the event. Please try again." });
+                await _data.UpdateEventAsync(model);
+                return Json(new { success = true, message = "Event updated successfully!" });
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "Unexpected error. Please try again.");
-                Console.WriteLine("General Error: " + ex.Message);
-                return Json(new { success = false, message = "Unexpected error. Please try again." });
+                Console.WriteLine("Error: " + ex.Message);
+                return Json(new { success = false, message = "Error updating the event. Please try again." });
             }
         }
 
 
         // POST: Delete Event
         [HttpPost]
-        public IActionResult DeleteEvent(int id)
+        public async Task<IActionResult> DeleteEvent(int id)
         {
             try
             {
-                using (SqlConnection conn = new SqlConnection(_config.GetConnectionString("HOME_DB")))
-                {
-                    SqlCommand cmd = new SqlCommand("DELETE FROM Events WHERE EventID = @EventID", conn);
-                    cmd.Parameters.AddWithValue("@EventID", id);
-                    conn.Open();
-                    cmd.ExecuteNonQuery();
-                }
-
-                return Json(new { success = true, message = "Event deleted successfully!" });  // Return success for AJAX
+                await _data.DeleteEventAsync(id);
+                return Json(new { success = true, message = "Event deleted successfully!" });
             }
             catch (Exception ex)
             {

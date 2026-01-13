@@ -8,24 +8,23 @@ using Microsoft.AspNetCore.Authorization;
 namespace HOMEOWNER.Controllers
 {
     [Authorize(Roles = "Admin")]
-    public class FacilityController : Controller
+    public class FacilityController : BaseController
     {
-        private readonly ApplicationDbContext _context;
         private readonly ILogger<FacilityController> _logger;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public FacilityController(ApplicationDbContext context, ILogger<FacilityController> logger)
+        public FacilityController(IDataService data, ILogger<FacilityController> logger, IWebHostEnvironment webHostEnvironment) : base(data)
         {
-            _context = context;
             _logger = logger;
+            _webHostEnvironment = webHostEnvironment;
         }
-
 
 
 
         // GET: Facility
         public IActionResult Index()
         {
-            var facilities = _context.Facilities.ToList();
+            var facilities = _data.Facilities.ToList();
             return View(facilities);
         }
 
@@ -48,8 +47,7 @@ namespace HOMEOWNER.Controllers
             try
             {
                 // Check for duplicate facility name
-                var existingFacility = await _context.Facilities
-                                                     .FirstOrDefaultAsync(f => f.FacilityName == facility.FacilityName);
+                var existingFacility = _data.Facilities.FirstOrDefault(f => f.FacilityName == facility.FacilityName);
                 if (existingFacility != null)
                 {
                     return Json(new { success = false, message = "Facility name already exists!" });
@@ -58,7 +56,7 @@ namespace HOMEOWNER.Controllers
                 // Process image files
                 if (ImageFiles != null && ImageFiles.Count > 0)
                 {
-                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/facilities");
+                    var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images", "facilities");
                     if (!Directory.Exists(uploadsFolder))
                         Directory.CreateDirectory(uploadsFolder);
 
@@ -83,16 +81,15 @@ namespace HOMEOWNER.Controllers
                 // Set default availability status
                 facility.AvailabilityStatus = "Available";
 
-                // Add facility to the database
-                _context.Facilities.Add(facility);
-                await _context.SaveChangesAsync();
+                // Add facility to Firebase
+                await _data.AddFacilityAsync(facility);
 
-                // Add facility logic here
-                var facilities = _context.Facilities.ToList(); // Or any other data source
+                var facilities = _data.Facilities.ToList();
                 return Json(new { success = true, message = "Facility added successfully.", facilities });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Error adding facility");
                 return Json(new { success = false, message = "An error occurred. Please try again." });
             }
         }

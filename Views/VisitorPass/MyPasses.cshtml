@@ -1,0 +1,42 @@
+@{
+    ViewData["Title"] = "My Visitor Passes";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="fas fa-list-check me-2"></i>My Visitor Passes</h4>
+                    <a href="@Url.Action("Request", "VisitorPass")" class="btn btn-light btn-sm">
+                        <i class="fas fa-plus me-1"></i>New Request
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Pass ID</th>
+                                    <th>Visitor Name</th>
+                                    <th>Visit Date</th>
+                                    <th>Purpose</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-5">
+                                        <i class="fas fa-id-card fa-3x mb-3 d-block"></i>
+                                        No visitor passes found
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

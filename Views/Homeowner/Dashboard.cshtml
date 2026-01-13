@@ -3,18 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="~/css/homeowner.css" asp-append-version="true">
+    <title>Homeowner Dashboard - Modern & Professional</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/modern-dashboard.css" asp-append-version="true">
 </head>
 <body>
     <div class="dashboard-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
+            <!-- Profile Section -->
             <div class="profile-section">
-                <img src="@ViewData["ProfileImage"]" alt="Profile Image" class="profile-img" id="profile-img" />
+                <img src="@ViewData["ProfileImage"]" alt="Profile" class="profile-img" id="profile-img" />
                 <input type="file" id="upload-input" style="display: none;">
                 <button class="upload-btn" onclick="document.getElementById('upload-input').click()">
                     <i class="fas fa-camera"></i> Change Photo
@@ -22,14 +28,14 @@
                 <p>@(User.Identity?.Name ?? "Guest")</p>
             </div>
 
-            <!-- Sidebar Menu -->
+            <!-- Dashboard Menu -->
             <div class="sidebar-header">Dashboard</div>
             <nav class="menu">
-                <a href="#" onclick="loadContent('@Url.Action("Dashboard", "Homeowner")')">
+                <a href="#" class="active" onclick="loadContent('@Url.Action("Dashboard", "Homeowner")')">
                     <i class="fas fa-home"></i> <span>Home</span>
                 </a>
                 <a asp-controller="Reservation" asp-action="Index">
-                    <i class="fas fa-calendar-alt"></i> <span>Reservation</span>
+                    <i class="fas fa-calendar-check"></i> <span>Reservations</span>
                 </a>
                 <a href="#" onclick="loadContent('@Url.Action("Index", "Document")')">
                     <i class="fas fa-file-alt"></i> <span>Documents</span>
@@ -40,7 +46,7 @@
                 <a href="#" onclick="loadContent('@Url.Action("Index", "Poll")')">
                     <i class="fas fa-poll"></i> <span>Polls & Surveys</span>
                 </a>
-                <a asp-controller="Homeowner" asp-action="Calendar" class="nav-link">
+                <a asp-controller="Homeowner" asp-action="Calendar">
                     <i class="fas fa-calendar-day"></i> <span>Events Calendar</span>
                 </a>
             </nav>
@@ -48,8 +54,8 @@
             <!-- Services Section -->
             <div class="sidebar-header">Services</div>
             <nav class="menu">
-                <a asp-controller="Homeowner" asp-action="SubmitRequest">
-                    <i class="fas fa-wrench"></i> <span>Service Requests</span>
+                <a asp-controller="Service" asp-action="SubmitRequest">
+                    <i class="fas fa-tools"></i> <span>Service Requests</span>
                 </a>
                 <a href="#" onclick="loadContent('@Url.Action("Request", "VisitorPass")')">
                     <i class="fas fa-id-card"></i> <span>Visitor Pass</span>
@@ -62,20 +68,20 @@
                 </a>
             </nav>
 
-            <!-- Billing & Payments Section -->
+            <!-- Billing & Payments -->
             <div class="sidebar-header">Billing & Payments</div>
             <nav class="menu">
-                <a asp-controller="Payment" asp-action="Index" class="nav-link">
+                <a asp-controller="Payment" asp-action="Index">
                     <i class="fas fa-credit-card"></i> <span>My Bills</span>
                 </a>
                 <a href="#" onclick="loadContent('@Url.Action("MyPasses", "VisitorPass")')">
-                    <i class="fas fa-list"></i> <span>My Visitor Passes</span>
+                    <i class="fas fa-list-check"></i> <span>My Visitor Passes</span>
                 </a>
                 <a href="#" onclick="loadContent('@Url.Action("MyVehicles", "VehicleRegistration")')">
-                    <i class="fas fa-list"></i> <span>My Vehicles</span>
+                    <i class="fas fa-car-side"></i> <span>My Vehicles</span>
                 </a>
                 <a href="#" onclick="loadContent('@Url.Action("MyComplaints", "Complaint")')">
-                    <i class="fas fa-list"></i> <span>My Complaints</span>
+                    <i class="fas fa-list-alt"></i> <span>My Complaints</span>
                 </a>
             </nav>
 
@@ -83,9 +89,9 @@
             <div class="sidebar-header">Account</div>
             <nav class="menu">
                 <a href="#">
-                    <i class="fas fa-cogs"></i> <span>Settings</span>
+                    <i class="fas fa-cog"></i> <span>Settings</span>
                 </a>
-                <a asp-controller="Account" asp-action="Logout" class="d-flex align-items-center mb-3">
+                <a asp-controller="Account" asp-action="Logout">
                     <i class="fas fa-sign-out-alt"></i> <span>Log Out</span>
                 </a>
             </nav>
@@ -112,42 +118,73 @@
             <div id="dynamic-content">
                 <!-- Welcome Box -->
                 <div class="content-box">
-                    <h2>Hello, @(User.Identity?.Name ?? "User")!</h2>
-                    <p class="intro">Here you can manage your reservations, payments, and much more. Stay on top of your homeownership activities with our comprehensive dashboard tools and features.</p>
+                    <h2>Hello, @(User.Identity?.Name ?? "User")! 👋</h2>
+                    <p class="intro">Welcome to your homeowner dashboard. Manage your reservations, payments, service requests, and stay connected with your community—all in one place.</p>
                 </div>
 
                 <!-- Stats Cards -->
                 <div class="stats-container">
                     <div class="stat-card reservations">
-                        <h3>Reservations</h3>
-                        <p>Pending:</p>
+                        <h3>Active Reservations</h3>
+                        <p>Pending Approval</p>
                         <span class="stat-value">5</span>
                     </div>
                     <div class="stat-card payments">
-                        <h3>Payments</h3>
-                        <p>Pending:</p>
+                        <h3>Outstanding Payments</h3>
+                        <p>Amount Due</p>
                         <span class="stat-value">$200</span>
                     </div>
                     <div class="stat-card requests">
-                        <h3>Requests</h3>
-                        <p>Open:</p>
+                        <h3>Service Requests</h3>
+                        <p>Open Tickets</p>
                         <span class="stat-value">2</span>
                     </div>
                 </div>
 
-                <!-- Call to Action Button -->
-                <a href="#" class="cta-btn">
-                    <i class="fas fa-rocket"></i> Explore More Features
-                </a>
+                <!-- Quick Actions -->
+                <div class="content-box">
+                    <h2>Quick Actions</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                        <a asp-controller="Reservation" asp-action="Index" class="cta-btn" style="text-align: center;">
+                            <i class="fas fa-calendar-plus"></i> Book Facility
+                        </a>
+                        <a asp-controller="Payment" asp-action="Index" class="cta-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-align: center;">
+                            <i class="fas fa-money-bill-wave"></i> Pay Bills
+                        </a>
+                        <a asp-controller="Homeowner" asp-action="SubmitRequest" class="cta-btn" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); text-align: center;">
+                            <i class="fas fa-wrench"></i> Request Service
+                        </a>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
 
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // Simple animation for sidebar menu items
-        document.querySelectorAll('.menu a').forEach((item, index) => {
-            item.style.transitionDelay = `${index * 0.05}s`;
+        // Mobile Sidebar Toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Animate menu items on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuItems = document.querySelectorAll('.menu a');
+            menuItems.forEach((item, index) => {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-20px)';
+                setTimeout(() => {
+                    item.style.transition = 'all 0.3s ease';
+                    item.style.opacity = '1';
+                    item.style.transform = 'translateX(0)';
+                }, index * 50);
+            });
         });
 
         // Profile image upload preview
@@ -162,9 +199,8 @@
             }
         });
 
-        // Forum button functionality
+        // Forum functionality
         $(document).ready(function() {
-            // Load forum content when button is clicked
             $('#forum-btn').click(function() {
                 $.ajax({
                     url: '/Forum/Embedded',
@@ -182,16 +218,13 @@
                 });
             });
 
-            // Back to dashboard button
             $('#back-to-dashboard-btn').click(function() {
-                location.reload(); // Or load default dashboard content via AJAX
+                location.reload();
             });
 
-            // Handle forum post submissions
             $(document).on('submit', '#post-form', function(e) {
                 e.preventDefault();
                 var formData = new FormData(this);
-
                 $.ajax({
                     url: '/Forum/CreatePost',
                     type: 'POST',
@@ -199,7 +232,7 @@
                     processData: false,
                     contentType: false,
                     success: function() {
-                        $('#forum-btn').click(); // Refresh forum content
+                        $('#forum-btn').click();
                     },
                     error: function() {
                         alert('Error submitting post');
@@ -209,13 +242,11 @@
         });
 
         function initializeForumScripts() {
-            // Toggle comment section
             $('.btn-comment-toggle').click(function() {
                 const postCard = $(this).closest('.forum-post-card');
                 postCard.find('.comments-section, .comment-form').collapse('toggle');
             });
 
-            // File upload preview
             $('.file-upload-input').change(function() {
                 const fileName = $(this).val().split('\\').pop();
                 if (fileName) {
@@ -225,18 +256,13 @@
                 }
             });
 
-            // Smooth animations
             $('.forum-post-card').hover(
-                function() {
-                    $(this).addClass('shadow-lg');
-                },
-                function() {
-                    $(this).removeClass('shadow-lg');
-                }
+                function() { $(this).addClass('shadow-lg'); },
+                function() { $(this).removeClass('shadow-lg'); }
             );
         }
 
-        // Load content dynamically via AJAX
+        // Load content dynamically
         function loadContent(url) {
             $.ajax({
                 url: url,
@@ -259,6 +285,15 @@
                 e.preventDefault();
                 var url = $(this).attr('onclick').match(/'([^']+)'/)[1];
                 loadContent(url);
+                
+                // Update active state
+                $('.menu a').removeClass('active');
+                $(this).addClass('active');
+                
+                // Close mobile menu
+                if (window.innerWidth <= 768) {
+                    toggleSidebar();
+                }
             });
         });
     </script>

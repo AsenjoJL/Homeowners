@@ -1,0 +1,98 @@
+@{
+    ViewData["Title"] = "Submit Complaint";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Submit Complaint</h4>
+                </div>
+                <div class="card-body">
+                    <form id="complaintForm">
+                        <div class="mb-3">
+                            <label for="Category" class="form-label">Category *</label>
+                            <select class="form-select" id="Category" name="Category" required>
+                                <option value="">Select Category</option>
+                                <option value="Noise">Noise Complaint</option>
+                                <option value="Parking">Parking Issue</option>
+                                <option value="Maintenance">Maintenance Issue</option>
+                                <option value="Security">Security Concern</option>
+                                <option value="Cleanliness">Cleanliness</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="Subject" class="form-label">Subject *</label>
+                            <input type="text" class="form-control" id="Subject" name="Subject" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="Description" class="form-label">Description *</label>
+                            <textarea class="form-control" id="Description" name="Description" rows="5" required></textarea>
+                            <small class="text-muted">Please provide as much detail as possible.</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="Priority" class="form-label">Priority *</label>
+                            <select class="form-select" id="Priority" name="Priority" required>
+                                <option value="Low">Low</option>
+                                <option value="Medium" selected>Medium</option>
+                                <option value="High">High</option>
+                                <option value="Urgent">Urgent</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="IsAnonymous" name="IsAnonymous" value="true">
+                            <label class="form-check-label" for="IsAnonymous">
+                                Submit anonymously
+                            </label>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-paper-plane me-2"></i>Submit Complaint
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $('#complaintForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        var formData = {
+            Category: $('#Category').val(),
+            Subject: $('#Subject').val(),
+            Description: $('#Description').val(),
+            Priority: $('#Priority').val(),
+            IsAnonymous: $('#IsAnonymous').is(':checked')
+        };
+        
+        $.ajax({
+            url: '@Url.Action("Submit", "Complaint")',
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                if (response.success) {
+                    alert(response.message);
+                    $('#complaintForm')[0].reset();
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function() {
+                alert('An error occurred while submitting the complaint.');
+            }
+        });
+    });
+});
+</script>

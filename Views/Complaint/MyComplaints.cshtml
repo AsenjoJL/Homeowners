@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "My Complaints";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="fas fa-list-alt me-2"></i>My Complaints</h4>
+                    <a href="@Url.Action("Submit", "Complaint")" class="btn btn-light btn-sm">
+                        <i class="fas fa-plus me-1"></i>Submit New Complaint
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Complaint ID</th>
+                                    <th>Category</th>
+                                    <th>Subject</th>
+                                    <th>Date Submitted</th>
+                                    <th>Priority</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-5">
+                                        <i class="fas fa-clipboard-list fa-3x mb-3 d-block"></i>
+                                        No complaints submitted yet
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

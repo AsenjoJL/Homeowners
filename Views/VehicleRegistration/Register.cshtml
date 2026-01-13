@@ -1,0 +1,90 @@
+@{
+    ViewData["Title"] = "Vehicle Registration";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-car me-2"></i>Register Vehicle</h4>
+                </div>
+                <div class="card-body">
+                    <form id="vehicleRegistrationForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="Make" class="form-label">Vehicle Make *</label>
+                                <input type="text" class="form-control" id="Make" name="Make" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="Model" class="form-label">Vehicle Model *</label>
+                                <input type="text" class="form-control" id="Model" name="Model" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="PlateNumber" class="form-label">Plate Number *</label>
+                                <input type="text" class="form-control" id="PlateNumber" name="PlateNumber" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="Color" class="form-label">Color *</label>
+                                <input type="text" class="form-control" id="Color" name="Color" required>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="VehicleType" class="form-label">Vehicle Type *</label>
+                                <select class="form-select" id="VehicleType" name="VehicleType" required>
+                                    <option value="">Select Type</option>
+                                    <option value="Car">Car</option>
+                                    <option value="SUV">SUV</option>
+                                    <option value="Truck">Truck</option>
+                                    <option value="Motorcycle">Motorcycle</option>
+                                    <option value="Van">Van</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-check me-2"></i>Register Vehicle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $('#vehicleRegistrationForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        var formData = {
+            Make: $('#Make').val(),
+            Model: $('#Model').val(),
+            PlateNumber: $('#PlateNumber').val(),
+            Color: $('#Color').val(),
+            VehicleType: $('#VehicleType').val()
+        };
+        
+        $.ajax({
+            url: '@Url.Action("Register", "VehicleRegistration")',
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                if (response.success) {
+                    alert(response.message);
+                    $('#vehicleRegistrationForm')[0].reset();
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function() {
+                alert('An error occurred while submitting the registration.');
+            }
+        });
+    });
+});
+</script>

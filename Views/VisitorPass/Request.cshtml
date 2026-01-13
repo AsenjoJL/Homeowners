@@ -1,0 +1,116 @@
+@{
+    ViewData["Title"] = "Request Visitor Pass";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0"><i class="fas fa-id-card me-2"></i>Request Visitor Pass</h4>
+                </div>
+                <div class="card-body">
+                    <form id="visitorPassForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="VisitorName" class="form-label">Visitor Name *</label>
+                                <input type="text" class="form-control" id="VisitorName" name="VisitorName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="VisitorPhone" class="form-label">Contact Number *</label>
+                                <input type="tel" class="form-control" id="VisitorPhone" name="VisitorPhone" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="VisitDate" class="form-label">Visit Date *</label>
+                                <input type="date" class="form-control" id="VisitDate" name="VisitDate" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="ExpectedArrivalTime" class="form-label">Expected Time *</label>
+                                <input type="time" class="form-control" id="ExpectedArrivalTime" name="ExpectedArrivalTime" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="Purpose" class="form-label">Purpose of Visit *</label>
+                            <select class="form-select" id="Purpose" name="Purpose" required>
+                                <option value="">Select Purpose</option>
+                                <option value="Personal">Personal Visit</option>
+                                <option value="Delivery">Delivery</option>
+                                <option value="Service">Service/Repair</option>
+                                <option value="Event">Event/Gathering</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="VisitorIDNumber" class="form-label">ID Number (Optional)</label>
+                                <input type="text" class="form-control" id="VisitorIDNumber" name="VisitorIDNumber">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="VehiclePlateNumber" class="form-label">Vehicle Plate (Optional)</label>
+                                <input type="text" class="form-control" id="VehiclePlateNumber" name="VehiclePlateNumber">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="VehicleType" class="form-label">Vehicle Type (Optional)</label>
+                            <select class="form-select" id="VehicleType" name="VehicleType">
+                                <option value="">Select Type</option>
+                                <option value="Car">Car</option>
+                                <option value="Motorcycle">Motorcycle</option>
+                                <option value="Van">Van</option>
+                                <option value="Truck">Truck</option>
+                            </select>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-info text-white">
+                                <i class="fas fa-check me-2"></i>Request Pass
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $('#visitorPassForm').on('submit', function(e) {
+        e.preventDefault();
+        
+        var formData = {
+            VisitorName: $('#VisitorName').val(),
+            VisitorPhone: $('#VisitorPhone').val(),
+            VisitDate: $('#VisitDate').val(),
+            ExpectedArrivalTime: $('#ExpectedArrivalTime').val(),
+            Purpose: $('#Purpose').val(),
+            VisitorIDNumber: $('#VisitorIDNumber').val(),
+            VehiclePlateNumber: $('#VehiclePlateNumber').val(),
+            VehicleType: $('#VehicleType').val()
+        };
+        
+        $.ajax({
+            url: '@Url.Action("RequestPass", "VisitorPass")',
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                if (response.success) {
+                    alert(response.message);
+                    $('#visitorPassForm')[0].reset();
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            },
+            error: function() {
+                alert('An error occurred while submitting the request.');
+            }
+        });
+    });
+});
+</script>

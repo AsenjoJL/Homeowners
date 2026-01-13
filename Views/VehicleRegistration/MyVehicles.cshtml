@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "My Vehicles";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0"><i class="fas fa-car-side me-2"></i>My Registered Vehicles</h4>
+                    <a href="@Url.Action("Register", "VehicleRegistration")" class="btn btn-light btn-sm">
+                        <i class="fas fa-plus me-1"></i>Register New Vehicle
+                    </a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Plate Number</th>
+                                    <th>Make & Model</th>
+                                    <th>Year</th>
+                                    <th>Color</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-5">
+                                        <i class="fas fa-car fa-3x mb-3 d-block"></i>
+                                        No vehicles registered yet
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

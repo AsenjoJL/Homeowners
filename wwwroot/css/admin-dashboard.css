@@ -1,0 +1,94 @@
+/* ============================================================
+   ADMIN DASHBOARD - SCROLLING FIX (HIGHEST PRIORITY)
+   This MUST override Dashboard.css
+   ============================================================ */
+
+/* Reset any conflicting styles */
+body nav.sidebar,
+body nav.sidebar *,
+body .sidebar,
+body .sidebar * {
+    box-sizing: border-box !important;
+}
+
+/* Sidebar container - fixed position, no scroll */
+body nav.sidebar,
+body .sidebar {
+    position: fixed !important;
+    left: 0 !important;
+    top: 60px !important;
+    width: 280px !important;
+    height: calc(100vh - 60px) !important;
+    max-height: calc(100vh - 60px) !important;
+    background: #1e293b !important;
+    overflow: hidden !important;
+    z-index: 1000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+}
+
+/* The UL element that contains all menu items - THIS SCROLLS */
+body nav.sidebar>ul.sidebar-menu,
+body .sidebar>ul.sidebar-menu,
+body nav.sidebar ul.sidebar-menu,
+body .sidebar ul.sidebar-menu {
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    list-style: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-behavior: smooth !important;
+    display: block !important;
+}
+
+/* Ensure menu items are visible */
+body nav.sidebar>ul.sidebar-menu>li,
+body .sidebar>ul.sidebar-menu>li {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+}
+
+/* Scrollbar styling - make it visible */
+body nav.sidebar>ul.sidebar-menu::-webkit-scrollbar,
+body .sidebar>ul.sidebar-menu::-webkit-scrollbar {
+    width: 10px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+body nav.sidebar>ul.sidebar-menu::-webkit-scrollbar-track,
+body .sidebar>ul.sidebar-menu::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 5px !important;
+}
+
+body nav.sidebar>ul.sidebar-menu::-webkit-scrollbar-thumb,
+body .sidebar>ul.sidebar-menu::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.4) !important;
+    border-radius: 5px !important;
+    border: 2px solid rgba(30, 41, 59, 0.5) !important;
+}
+
+body nav.sidebar>ul.sidebar-menu::-webkit-scrollbar-thumb:hover,
+body .sidebar>ul.sidebar-menu::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Firefox scrollbar */
+body nav.sidebar>ul.sidebar-menu,
+body .sidebar>ul.sidebar-menu {
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(255, 255, 255, 0.4) rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Main content area - adjust for sidebar */
+body .main-content {
+    margin-left: 280px !important;
+    width: calc(100% - 280px) !important;
+}
